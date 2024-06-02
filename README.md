@@ -1,0 +1,1 @@
+"A Spring Boot-based Hotel Management System that streamlines operations for hotel staff and guests with functionalities for reservations, customer and employee management, room management, housekeeping, billing, and role-based access control."
