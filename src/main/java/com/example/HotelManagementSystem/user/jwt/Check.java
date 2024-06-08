@@ -33,7 +33,7 @@ public class Check {
 
             User userModelFromDataBase =  userRepo.findByUsername(decodedJWT.getSubject());
 
-            if (!decodedJWT.getSubject().equals(userModelFromDataBase.getUsername()) || !blackListRepo.findByToken(jwt)
+            if (!decodedJWT.getSubject().equals(userModelFromDataBase.getUsername()) || blackListRepo.findByToken(jwt)
                     || !jwt.equals(userModelFromDataBase.getToken())){
                 return false;
             }

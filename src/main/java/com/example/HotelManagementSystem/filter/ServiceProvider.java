@@ -6,18 +6,22 @@ import com.example.HotelManagementSystem.user.jwt.Check;
 import com.example.HotelManagementSystem.user.service.LogFileService;
 import com.example.HotelManagementSystem.utils.constant.SystemConstants;
 import com.example.HotelManagementSystem.utils.constant.SystemPaths;
-import com.example.HotelManagementSystem.utils.encryption.Encryption;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.core.Response;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ServiceProvider implements ServiceProviderInterface {
+public class ServiceProvider {
 
     private final LogFileService logFileService;
     private final Check check;
@@ -28,15 +32,13 @@ public class ServiceProvider implements ServiceProviderInterface {
         this.check = check;
     }
 
-    @Override
-    public void filter(ContainerRequestContext containerRequestContext) {
+    public void filter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        String ipAddress = containerRequestContext.getHeaderString(SystemConstants.IP_HEADER);
-        String requestUri = containerRequestContext.getUriInfo().getRequestUri().toString();
-        String authorization = containerRequestContext.getHeaderString(SystemConstants.TOKEN_NAME_ON_HEADER);
-
-        System.out.println("allowed");
-
+        String ipAddress = request.getHeader(SystemConstants.IP_HEADER);
+        String requestUri = request.getRequestURI();
+        String authorization = request.getHeader(SystemConstants.TOKEN_NAME_ON_HEADER);
 
         boolean isAllowed = false;
 
@@ -46,6 +48,7 @@ public class ServiceProvider implements ServiceProviderInterface {
                 (requestUri.contains(SystemPaths.CHANGEUSERNAME) && ipAddress != null) ||
                 (requestUri.contains(SystemPaths.CHANGEROLE) && ipAddress != null)
         ) {
+            isAllowed = true;
         } else if (check.CheckJWTIfForUser(authorization) && ipAddress != null) {
             String roleOfToken = null;
             if (authorization != null) {
@@ -66,27 +69,29 @@ public class ServiceProvider implements ServiceProviderInterface {
                     for (String path : item.getPaths()) {
                         if (requestUri.contains(path)) {
                             isAllowed = true;
-                            System.out.println("allowed");
-                            System.out.println(isAllowed);
                             break;
                         }
                     }
                 }
             }
             if (!isAllowed) {
-                containerRequestContext.abortWith(Response.status(Response.Status.METHOD_NOT_ALLOWED).build());
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                return;
             }
         } else {
-            containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
+
         LocalDateTime currentDateTime = LocalDateTime.now();
         LogFile iPsModel = new LogFile(currentDateTime.toString(), ipAddress, requestUri);
         logFileService.saveLog(iPsModel);
+
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    @Override
-    public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext) {
-        int statusCode = containerResponseContext.getStatus();
+    public void filter(HttpServletResponse response) throws IOException {
+        int statusCode = response.getStatus();
         String message;
         switch (statusCode) {
             case 200:
@@ -143,13 +148,14 @@ public class ServiceProvider implements ServiceProviderInterface {
         }
 
         String entity = "";
-        if ((statusCode == 200 || statusCode == 201 || statusCode == 202)) {
+        if (statusCode == 200 || statusCode == 201 || statusCode == 202) {
+            // Normal successful response handling
         } else {
-            try {
-                entity = containerResponseContext.getEntity().toString();
-                containerResponseContext.setEntity(statusCode + " : " + message + "\n" + entity);
-            } catch (Exception e) {
-                containerResponseContext.setEntity(statusCode + " : " + message + "\n" + entity);
+            if (!response.isCommitted()) {
+                response.resetBuffer();
+                response.setContentType("text/plain;charset=UTF-8");
+                response.getWriter().write(statusCode + " : " + message + "\n" + entity);
+                response.flushBuffer();
             }
         }
     }

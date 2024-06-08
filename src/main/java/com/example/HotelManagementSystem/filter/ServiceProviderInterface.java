@@ -1,21 +1,32 @@
 package com.example.HotelManagementSystem.filter;
 
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.ext.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Provider
-public interface ServiceProviderInterface extends ContainerRequestFilter, ContainerResponseFilter {
+@Component
+public class ServiceProviderInterface implements Filter {
 
-    @Transactional
-    @Override
-    void filter(ContainerRequestContext containerRequestContext);
+    private final ServiceProvider serviceProvider;
+
+    @Autowired
+    public ServiceProviderInterface(ServiceProvider serviceProvider) {
+        this.serviceProvider = serviceProvider;
+    }
 
     @Override
-    void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext);
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        serviceProvider.filter(servletRequest, servletResponse, filterChain);
+        serviceProvider.filter((HttpServletResponse) servletResponse);
+    }
 }
