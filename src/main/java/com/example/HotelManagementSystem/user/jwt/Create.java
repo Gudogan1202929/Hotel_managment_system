@@ -52,7 +52,7 @@ try {
     String token = JWT.create()
             .withIssuer(SystemConstants.ISSUER)
             .withSubject(user.getUsername())
-            .withClaim(SystemConstants.ROLE, userModel.getRole())
+            .withClaim(SystemConstants.ROLE, userModel.getRole().name())
             .withExpiresAt(new Date(System.currentTimeMillis() + 3600000))
             .sign(algorithm);
 

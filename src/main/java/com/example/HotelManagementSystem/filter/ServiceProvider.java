@@ -1,6 +1,6 @@
 package com.example.HotelManagementSystem.filter;
 
-import com.example.HotelManagementSystem.user.dto.Rolles;
+import com.example.HotelManagementSystem.user.dto.RollesAllowed;
 import com.example.HotelManagementSystem.user.entity.LogFile;
 import com.example.HotelManagementSystem.user.jwt.Check;
 import com.example.HotelManagementSystem.user.service.LogFileService;
@@ -54,17 +54,17 @@ public class ServiceProvider {
             if (authorization != null) {
                 roleOfToken = check.WhatRole(authorization);
             }
-            List<Rolles> listOfRolls = new ArrayList<>();
+            List<RollesAllowed> listOfRolls = new ArrayList<>();
 
-            Rolles Admin = new Rolles(SystemConstants.ADMIN);
+            RollesAllowed Admin = new RollesAllowed(SystemConstants.ADMIN);
             Admin.getPaths().add("/");
             listOfRolls.add(Admin);
 
-            Rolles User = new Rolles(SystemConstants.USER);
+            RollesAllowed User = new RollesAllowed(SystemConstants.USER);
             User.getPaths().add("/");
             listOfRolls.add(User);
 
-            for (Rolles item : listOfRolls) {
+            for (RollesAllowed item : listOfRolls) {
                 if (item.getRole().equalsIgnoreCase(roleOfToken)) {
                     for (String path : item.getPaths()) {
                         if (requestUri.contains(path)) {
@@ -149,7 +149,7 @@ public class ServiceProvider {
 
         String entity = "";
         if (statusCode == 200 || statusCode == 201 || statusCode == 202) {
-            // Normal successful response handling
+            System.out.println("Response is OK and fuck you");
         } else {
             if (!response.isCommitted()) {
                 response.resetBuffer();

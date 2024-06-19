@@ -1,6 +1,6 @@
 package com.example.HotelManagementSystem.user.entity;
 
-
+import com.example.HotelManagementSystem.user.dto.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -23,10 +23,11 @@ public class User {
     @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
-    @Column(name = "role", columnDefinition = "TEXT")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, columnDefinition = "TEXT")
+    private Role role;
 
-    public User(String username, String password, String role) {
+    public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -67,11 +68,11 @@ public class User {
         this.token = token;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

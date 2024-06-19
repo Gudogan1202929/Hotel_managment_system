@@ -3,6 +3,7 @@ package com.example.HotelManagementSystem.user.service;
 import com.example.HotelManagementSystem.user.dto.ChangeRole;
 import com.example.HotelManagementSystem.user.dto.ChangeUserName;
 import com.example.HotelManagementSystem.user.dto.ChangeUserPassword;
+import com.example.HotelManagementSystem.user.dto.Role;
 import com.example.HotelManagementSystem.user.entity.User;
 import com.example.HotelManagementSystem.user.jwt.Check;
 import com.example.HotelManagementSystem.user.jwt.Create;
@@ -111,7 +112,8 @@ public class UserService {
             String hashedPassword = Hash.hashing(decryptedPassword);
 
             if (hashedPassword.equals(user1.getPassword())) {
-                user1.setRole(changeRole.getNewRole());
+                Role newRole = Role.valueOf(changeRole.getNewRole().toUpperCase());
+                user1.setRole(newRole);
                 userRepo.save(user1);
                 return "Role become " + changeRole.getNewRole() + " successfully";
             } else {

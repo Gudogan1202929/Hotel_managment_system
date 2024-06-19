@@ -3,11 +3,11 @@ package com.example.HotelManagementSystem.user.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rolles {
+public class RollesAllowed {
     private String role;
     private List<String> paths;
 
-    public Rolles(String role) {
+    public RollesAllowed(String role) {
         this.role = role;
         this.paths = new ArrayList<>();
     }

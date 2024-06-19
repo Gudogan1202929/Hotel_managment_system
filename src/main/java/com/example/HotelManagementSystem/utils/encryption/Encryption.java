@@ -30,7 +30,7 @@ public class Encryption {
             return decryptedText;
         } catch (Exception e) {
             System.out.println("Error while decrypting: " + e.toString());
-            throw new Exception(SystemConstants.CANNT_LOGIN);
+            throw new Exception("Error while decrypting: " + e.toString());
         }
     }
 
