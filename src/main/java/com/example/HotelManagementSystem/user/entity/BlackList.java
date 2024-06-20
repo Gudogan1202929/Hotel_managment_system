@@ -20,5 +20,5 @@ public class BlackList {
         @Column(name = "black_token",
                 nullable = false,
                 columnDefinition = "TEXT")
-        private String token;
+        private String token;////
 }
