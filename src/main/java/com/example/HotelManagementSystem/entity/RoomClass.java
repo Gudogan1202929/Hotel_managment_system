@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +27,9 @@ public class RoomClass {
     @Column(name = "base_price", nullable = false,columnDefinition = "DECIMAL(10, 2)")
     private Double basePrice;
 
+    @OneToMany(mappedBy = "roomClass")
+    private List<RoomClassBedType> roomClassBedTypes;
+
+    @OneToMany(mappedBy = "roomClass")
+    private List<RoomClassFeature> roomClassFeatures;
 }

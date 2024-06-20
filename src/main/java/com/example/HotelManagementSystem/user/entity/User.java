@@ -1,7 +1,10 @@
 package com.example.HotelManagementSystem.user.entity;
 
+import com.example.HotelManagementSystem.entity.CancellationRequest;
 import com.example.HotelManagementSystem.user.dto.Role;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "user_table")
@@ -26,6 +29,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, columnDefinition = "TEXT")
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<CancellationRequest> cancellationRequests;
 
     public User(String username, String password, Role role) {
         this.username = username;

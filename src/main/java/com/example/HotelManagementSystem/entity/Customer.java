@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -36,6 +38,6 @@ public class Customer {
     @Column()
     private String address;
 
-
-
+    @OneToMany(mappedBy = "customer")
+    private List<Reservation> reservations;
 }

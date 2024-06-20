@@ -27,8 +27,8 @@ public class CancellationRequest {
     private Reservation reservation;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "admin_id", nullable = false)
+    private User admin;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

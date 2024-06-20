@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +25,6 @@ public class RoomStatus {
     @Column(name = "status_name", nullable = false, length = 50)
     private String statusName;
 
+    @OneToMany(mappedBy = "status")
+    private List<Room> rooms;
 }

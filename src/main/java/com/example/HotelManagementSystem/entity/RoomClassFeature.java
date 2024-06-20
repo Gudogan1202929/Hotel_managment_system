@@ -21,11 +21,11 @@ public class RoomClassFeature {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "room_class_id")
+    @JoinColumn(name = "room_class_id", nullable = false)
     private RoomClass roomClass;
 
     @ManyToOne
-    @JoinColumn(name = "feature_id")
+    @JoinColumn(name = "feature_id", nullable = false)
     private Feature feature;
 
 

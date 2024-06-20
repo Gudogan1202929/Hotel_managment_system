@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +23,6 @@ public class Feature {
     @Column(name = "feature_name", nullable = false, length = 100)
     private String featureName;
 
+    @OneToMany(mappedBy = "feature")
+    private List<RoomClassFeature> roomClassFeatures;
 }

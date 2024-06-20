@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,5 +35,6 @@ public class Room {
     @Column(name = "room_number", nullable = false)
     private Integer roomNumber;
 
-
+    @OneToMany(mappedBy = "room")
+    private List<Reservation> reservations;
 }

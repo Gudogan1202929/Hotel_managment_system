@@ -20,11 +20,11 @@ public class RoomClassBedType {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "room_class_id")
+    @JoinColumn(name = "room_class_id", nullable = false)
     private RoomClass roomClass;
 
     @ManyToOne
-    @JoinColumn(name = "bed_type_id")
+    @JoinColumn(name = "bed_type_id", nullable = false)
     private BedType bedType;
 
     @Column(name = "num_beds", nullable = false)

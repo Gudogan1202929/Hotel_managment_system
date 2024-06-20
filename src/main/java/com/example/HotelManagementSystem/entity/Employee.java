@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,8 +34,9 @@ public class Employee {
     @Column(length = 15)
     private String phone;
 
-    @Column(length = 255)
+    @Column(length = 80)
     private String address;
 
-
+    @OneToMany(mappedBy = "employee")
+    private List<Housekeeping> housekeepingTasks;
 }
