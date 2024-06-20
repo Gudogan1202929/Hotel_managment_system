@@ -84,7 +84,12 @@ public class ServiceProvider {
         }
 
         LocalDateTime currentDateTime = LocalDateTime.now();
-        LogFile iPsModel = new LogFile(currentDateTime.toString(), ipAddress, requestUri);
+//        LogFile iPsModel = new LogFile(currentDateTime.toString(), ipAddress, requestUri);
+        LogFile iPsModel = LogFile.builder()
+                .time(currentDateTime.toString())
+                .ip(ipAddress)
+                .URL(requestUri)
+                .build();
         logFileService.saveLog(iPsModel);
 
         filterChain.doFilter(servletRequest, servletResponse);

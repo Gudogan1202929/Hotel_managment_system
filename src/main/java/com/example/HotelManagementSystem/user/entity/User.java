@@ -3,25 +3,33 @@ package com.example.HotelManagementSystem.user.entity;
 import com.example.HotelManagementSystem.entity.CancellationRequest;
 import com.example.HotelManagementSystem.user.dto.Role;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "user_table")
+@Builder
+@Table(name = "Users")
 public class User {
+
     @Id
-    @SequenceGenerator(name = "user_table_sequence",
-            sequenceName = "user_table_sequence",
-            allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "user_table_sequence")
-    private long userid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "username", nullable = false, columnDefinition = "TEXT")
     private String username;
 
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
 
     @Column(name = "token", columnDefinition = "TEXT")
     private String token;
@@ -30,55 +38,8 @@ public class User {
     @Column(name = "role", nullable = false, columnDefinition = "TEXT")
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "admin")
     private List<CancellationRequest> cancellationRequests;
 
-    public User(String username, String password, Role role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
 
-    public User() {
-    }
-
-    public long getUserid() {
-        return userid;
-    }
-
-    public void setUserid(long userid) {
-        this.userid = userid;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

@@ -25,6 +25,6 @@ public class RoomStatus {
     @Column(name = "status_name", nullable = false, length = 50)
     private String statusName;
 
-    @OneToMany(mappedBy = "status")
+    @OneToMany(mappedBy = "roomStatus")
     private List<Room> rooms;
 }

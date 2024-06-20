@@ -43,7 +43,10 @@ try {
     }
 
     if (userModel.getToken() != null) {
-        BlackList blackListModel = new BlackList(userModel.getToken());
+//        BlackList blackListModel = new BlackList(userModel.getToken());
+        BlackList blackListModel = BlackList.builder()
+                .token(userModel.getToken())
+                .build();
         blackListService.save(blackListModel);
     }
 

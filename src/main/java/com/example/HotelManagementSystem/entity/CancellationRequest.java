@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name = "CancellationRequests")
+@Table(name = "Cancellation_Requests")
 public class CancellationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
