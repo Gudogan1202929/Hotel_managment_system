@@ -24,11 +24,12 @@ public class Room {
     @Column(name = "floor_number", nullable = false)
     private Integer floorNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "room_class_id", nullable = false)
-    private RoomClass roomClass;
+    @Column(name = "bed_number", nullable = false)
+    private Integer bedNumber;
 
-    @Enumerated
+    @Column(name = "room_info", nullable = false)
+    private String roomInfo;
+
     @Column(name = "room_status", nullable = false)
     private String roomStatus;
 

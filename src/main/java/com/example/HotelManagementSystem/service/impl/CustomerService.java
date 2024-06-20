@@ -10,6 +10,7 @@ import com.example.HotelManagementSystem.service.CustomerServiceInt;
 import com.example.HotelManagementSystem.user.repositorie.UserRepo;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -143,6 +144,24 @@ public class CustomerService implements CustomerServiceInt {
                 .build();
 
         return APIResponse.ok(deletedCustomerDto, "Customer deleted successfully");
+    }
+
+    public APIResponse<List<CustomerDto>> searchByParams(Specification<Customer> params) {
+        List<Customer> customers = customerRepository.findAll(params);
+
+        List<CustomerDto> customerDtos = customers
+                .stream()
+                .map(customer -> CustomerDto.builder()
+                        .id(customer.getId())
+                        .user(userRepository.findById(customer.getUser().getId()).get())
+                        .firstName(customer.getFirstName())
+                        .lastName(customer.getLastName())
+                        .address(customer.getAddress())
+                        .phone(customer.getPhone())
+                        .build())
+                .toList();
+
+        return APIResponse.ok(customerDtos, "Customers fetched successfully");
     }
 
 

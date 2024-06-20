@@ -12,6 +12,7 @@ import com.example.HotelManagementSystem.repository.RoomRepo;
 import com.example.HotelManagementSystem.repository.RoomReservationRepo;
 import com.example.HotelManagementSystem.service.CancellationRequestServiceInt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -230,4 +231,27 @@ public class CancellationRequestService implements CancellationRequestServiceInt
 
         return APIResponse.ok(cancellationRequestDto, "Cancellation request rejected successfully");
     }
+
+
+
+    //searchByParams
+    @Override
+    public APIResponse<List<CancellationRequestDto>> searchByParams(Specification<CancellationRequest> params) {
+
+        List<CancellationRequest> cancellationRequests = cancellationRequestRepo.findAll(params);
+
+
+        List<CancellationRequestDto> cancellationRequestDtos = cancellationRequests
+                .stream()
+                .map(cancellationRequest -> CancellationRequestDto.builder()
+                        .id(cancellationRequest.getId())
+                        .reservationId(cancellationRequest.getReservation().getId())
+                        .status(cancellationRequest.getStatus())
+                        .requestedAt(cancellationRequest.getRequestedAt())
+                        .build())
+                .toList();
+
+        return APIResponse.ok(cancellationRequestDtos, "Cancellation requests fetched successfully");
+    }
+
 }

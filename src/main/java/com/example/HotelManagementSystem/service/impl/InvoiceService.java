@@ -8,6 +8,7 @@ import com.example.HotelManagementSystem.repository.InvoiceRepo;
 import com.example.HotelManagementSystem.repository.RoomReservationRepo;
 import com.example.HotelManagementSystem.service.InvoiceServiceInt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.HotelManagementSystem.dto.response.APIResponse;
@@ -147,4 +148,26 @@ public class InvoiceService implements InvoiceServiceInt {
         return APIResponse.ok(deletedInvoiceDto, "Invoice deleted successfully");
 
     }
+
+    @Override
+    public APIResponse<List<InvoiceDto>> searchByParams(Specification<Invoice> params) {
+        List<Invoice> invoices = invoiceRepository.findAll(params);
+
+        List<InvoiceDto> invoiceDtoList = invoices
+                .stream()
+                .map(invoice -> InvoiceDto.builder()
+                        .id(invoice.getId())
+                        .reservationId(invoice.getReservation().getId())
+                        .amount(invoice.getAmount())
+                        .createdAt(invoice.getCreatedAt())
+                        .status(invoice.getStatus())
+                        .build())
+                .toList();
+
+        return APIResponse.ok(invoiceDtoList, "Invoices fetched successfully");
+    }
+
+
+
+
 }

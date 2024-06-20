@@ -10,6 +10,7 @@ import com.example.HotelManagementSystem.repository.HouseKeppingRepo;
 import com.example.HotelManagementSystem.repository.RoomRepo;
 import com.example.HotelManagementSystem.service.HousekeepingServiceInt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -160,6 +161,24 @@ public class HousekeepingService implements HousekeepingServiceInt {
                 .build();
 
         return APIResponse.ok(housekeepingDto, "Housekeeping deleted successfully");
+    }
+
+    @Override
+    public APIResponse<List<HousekeepingDto>> searchByParams(Specification<Housekeeping> params) {
+        List<Housekeeping> housekeepingList = housekeepingRepository.findAll(params);
+
+        List<HousekeepingDto> housekeepingDtoList = housekeepingList
+                .stream()
+                .map(housekeeping -> HousekeepingDto.builder()
+                        .id(housekeeping.getId())
+                        .roomId(housekeeping.getRoom().getId())
+                        .employeeId(housekeeping.getEmployee().getId())
+                        .status(housekeeping.getStatus())
+                        .taskDate(housekeeping.getTaskDate())
+                        .build())
+                .toList();
+
+        return APIResponse.ok(housekeepingDtoList, "Housekeeping fetched successfully");
     }
 
 

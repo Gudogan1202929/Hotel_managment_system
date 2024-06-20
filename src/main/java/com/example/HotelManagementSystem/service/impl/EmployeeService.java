@@ -8,6 +8,7 @@ import com.example.HotelManagementSystem.exception.ResourceNotFoundException;
 import com.example.HotelManagementSystem.repository.EmployeeRepo;
 import com.example.HotelManagementSystem.service.EmployeeServiceInt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -129,6 +130,44 @@ public class EmployeeService implements EmployeeServiceInt {
 
         return APIResponse.deleted(employeeDto, "Employee deleted successfully");
     }
+
+    //public APIResponse<List<CustomerDto>> searchByParams(Specification<Customer> params) {
+    //        List<Customer> customers = customerRepository.findAll(params);
+    //
+    //        List<CustomerDto> customerDtos = customers
+    //                .stream()
+    //                .map(customer -> CustomerDto.builder()
+    //                        .id(customer.getId())
+    //                        .user(userRepository.findById(customer.getUser().getId()).get())
+    //                        .firstName(customer.getFirstName())
+    //                        .lastName(customer.getLastName())
+    //                        .address(customer.getAddress())
+    //                        .phone(customer.getPhone())
+    //                        .build())
+    //                .toList();
+    //
+    //        return APIResponse.ok(customerDtos, "Customers fetched successfully");
+    //    }
+
+    @Override
+    public APIResponse<List<EmployeeDto>> searchByParams(Specification<Employee> params) {
+        List<Employee> employees = employeeRepository.findAll(params);
+
+        List<EmployeeDto> employeeDtos = employees
+                .stream()
+                .map(employee -> EmployeeDto.builder()
+                        .id(employee.getId())
+                        .firstName(employee.getFirstName())
+                        .lastName(employee.getLastName())
+                        .position(employee.getPosition())
+                        .phone(employee.getPhone())
+                        .address(employee.getAddress())
+                        .build())
+                .toList();
+
+        return APIResponse.ok(employeeDtos, "Employees fetched successfully");
+    }
+
 
 
 }

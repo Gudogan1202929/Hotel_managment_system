@@ -17,11 +17,14 @@ public class RoomDto {
     @NotNull(message = "Floor number is required")
     private int floorNumber;
 
-    @NotNull(message = "Room class ID is required")
-    private Long roomClassId;
+    @NotNull(message = "Bed number is required")
+    private int bedNumber;
 
-    @NotNull(message = "Status ID is required")
-    private Long statusId;
+    @NotNull(message = "Room info is required")
+    private String roomInfo;
+
+    @NotNull(message = "Status is required")
+    private String status;
 
     @NotNull(message = "Room number is required")
     private int roomNumber;

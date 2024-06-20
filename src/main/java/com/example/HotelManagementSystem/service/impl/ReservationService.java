@@ -1,10 +1,8 @@
 package com.example.HotelManagementSystem.service.impl;
 
+import com.example.HotelManagementSystem.dto.InvoiceDto;
 import com.example.HotelManagementSystem.dto.ReservationDto;
-import com.example.HotelManagementSystem.entity.CancellationRequest;
-import com.example.HotelManagementSystem.entity.Customer;
-import com.example.HotelManagementSystem.entity.Reservation;
-import com.example.HotelManagementSystem.entity.Room;
+import com.example.HotelManagementSystem.entity.*;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.exception.ResourceNotFoundException;
 import com.example.HotelManagementSystem.repository.CancellationRequestRepo;
@@ -13,6 +11,7 @@ import com.example.HotelManagementSystem.repository.RoomRepo;
 import com.example.HotelManagementSystem.repository.RoomReservationRepo;
 import com.example.HotelManagementSystem.service.ReservationServiceInt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.HotelManagementSystem.dto.response.APIResponse;
@@ -48,6 +47,8 @@ public class ReservationService implements ReservationServiceInt {
                         .customerId(reservation.getCustomer().getId())
                         .checkInDate(reservation.getCheckInDate())
                         .checkOutDate(reservation.getCheckOutDate())
+                        .expectedArrivalTime(reservation.getExpectedArrivalTime())
+                        .expectedLeavingTime(reservation.getExpectedLeavingTime())
                         .build())
                 .toList();
 
@@ -68,6 +69,8 @@ public class ReservationService implements ReservationServiceInt {
                 .customerId(reservation.getCustomer().getId())
                 .checkInDate(reservation.getCheckInDate())
                 .checkOutDate(reservation.getCheckOutDate())
+                .expectedArrivalTime(reservation.getExpectedArrivalTime())
+                .expectedLeavingTime(reservation.getExpectedLeavingTime())
                 .build();
 
         return APIResponse.ok(reservationDto, "Reservation fetched successfully");
@@ -96,8 +99,8 @@ public class ReservationService implements ReservationServiceInt {
             throw new BadRequestException("Room is already reserved");
         }
 
-        //check if the room is already reserved in the given date range
-        if (reservationRepo.existsByRoomIdAndCheckInDateLessThanEqualAndCheckOutDateGreaterThanEqual(reservationDto.getRoomId(), reservationDto.getCheckOutDate(), reservationDto.getCheckInDate())) {
+        //check if the room is already reserved in the given date range according to the expected arrival and leaving time
+        if (reservationRepo.existsByRoomIdAndExpectedArrivalTimeLessThanEqualAndExpectedLeavingTimeGreaterThanEqual(reservationDto.getRoomId(), reservationDto.getExpectedLeavingTime(), reservationDto.getExpectedArrivalTime())) {
             throw new BadRequestException("Room is already reserved in the given date range");
         }
 
@@ -108,6 +111,8 @@ public class ReservationService implements ReservationServiceInt {
                 .room(room)
                 .checkInDate(reservationDto.getCheckInDate())
                 .checkOutDate(reservationDto.getCheckOutDate())
+                .expectedArrivalTime(reservationDto.getExpectedArrivalTime())
+                .expectedLeavingTime(reservationDto.getExpectedLeavingTime())
                 .build();
 
         reservation = reservationRepo.save(reservation);
@@ -122,6 +127,8 @@ public class ReservationService implements ReservationServiceInt {
                 .customerId(reservation.getCustomer().getId())
                 .checkInDate(reservation.getCheckInDate())
                 .checkOutDate(reservation.getCheckOutDate())
+                .expectedArrivalTime(reservation.getExpectedArrivalTime())
+                .expectedLeavingTime(reservation.getExpectedLeavingTime())
                 .build();
 
         return APIResponse.created(savedReservationDto, "Reservation created successfully");
@@ -150,10 +157,11 @@ public class ReservationService implements ReservationServiceInt {
             throw new BadRequestException("Room is already reserved");
         }
 
-        //check if the room is already reserved in the given date range
-        if (reservationRepo.existsByRoomIdAndCheckInDateLessThanEqualAndCheckOutDateGreaterThanEqual(reservationDto.getRoomId(), reservationDto.getCheckOutDate(), reservationDto.getCheckInDate())) {
+        //check if the room is already reserved in the given date range according to the expected arrival and leaving time
+        if (reservationRepo.existsByRoomIdAndExpectedArrivalTimeLessThanEqualAndExpectedLeavingTimeGreaterThanEqualAndIdNot(reservationDto.getRoomId(), reservationDto.getExpectedLeavingTime(), reservationDto.getExpectedArrivalTime(), id)) {
             throw new BadRequestException("Room is already reserved in the given date range");
         }
+
 
         Customer customer = customerRepo.findById(reservationDto.getCustomerId()).get();
 
@@ -161,6 +169,8 @@ public class ReservationService implements ReservationServiceInt {
         reservation.setRoom(room);
         reservation.setCheckInDate(reservationDto.getCheckInDate());
         reservation.setCheckOutDate(reservationDto.getCheckOutDate());
+        reservation.setExpectedArrivalTime(reservationDto.getExpectedArrivalTime());
+        reservation.setExpectedLeavingTime(reservationDto.getExpectedLeavingTime());
 
         reservation = reservationRepo.save(reservation);
 
@@ -174,6 +184,8 @@ public class ReservationService implements ReservationServiceInt {
                 .customerId(reservation.getCustomer().getId())
                 .checkInDate(reservation.getCheckInDate())
                 .checkOutDate(reservation.getCheckOutDate())
+                .expectedArrivalTime(reservation.getExpectedArrivalTime())
+                .expectedLeavingTime(reservation.getExpectedLeavingTime())
                 .build();
 
         return APIResponse.ok(updatedReservationDto, "Reservation updated successfully");
@@ -241,5 +253,25 @@ public class ReservationService implements ReservationServiceInt {
         return APIResponse.ok(null, "Cancellation request created successfully");
     }
 
+
+    @Override
+    public APIResponse<List<ReservationDto>> searchByParams(Specification<Reservation> params) {
+        List<Reservation> reservationList = reservationRepo.findAll(params);
+
+        List<ReservationDto> reservationDtoList = reservationList
+                .stream()
+                .map(reservation -> ReservationDto.builder()
+                        .id(reservation.getId())
+                        .roomId(reservation.getRoom().getId())
+                        .customerId(reservation.getCustomer().getId())
+                        .checkInDate(reservation.getCheckInDate())
+                        .checkOutDate(reservation.getCheckOutDate())
+                        .expectedArrivalTime(reservation.getExpectedArrivalTime())
+                        .expectedLeavingTime(reservation.getExpectedLeavingTime())
+                        .build())
+                .toList();
+
+        return APIResponse.ok(reservationDtoList, "Reservations fetched successfully");
+    }
 
 }

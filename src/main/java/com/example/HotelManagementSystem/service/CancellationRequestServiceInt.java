@@ -3,6 +3,8 @@ package com.example.HotelManagementSystem.service;
 import com.example.HotelManagementSystem.dto.CancellationRequestDto;
 import com.example.HotelManagementSystem.dto.ReservationDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.CancellationRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,4 +25,10 @@ public interface CancellationRequestServiceInt {
     APIResponse<CancellationRequestDto>  approveCancellationRequest(Long requestId) ;
 
     APIResponse<CancellationRequestDto> rejectCancellationRequest(Long requestId);
+
+    APIResponse<List<CancellationRequestDto>> searchByParams(Specification<CancellationRequest> params);
+
+
+
+
 }

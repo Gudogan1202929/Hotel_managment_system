@@ -36,6 +36,15 @@ public class Reservation {
     @Column(name = "check_out_date")
     private Date checkOutDate;
 
+    //expected arrival time
+    @Column(name = "expected_arrival_time")
+    private Date expectedArrivalTime;
+
+    //expected leaving time
+    @Column(name = "expected_leaving_time")
+    private Date expectedLeavingTime;
+
+
     @Column(name = "created_at", insertable = false, updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;

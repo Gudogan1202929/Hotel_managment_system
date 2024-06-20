@@ -1,6 +1,8 @@
 package com.example.HotelManagementSystem.service;
 
 import com.example.HotelManagementSystem.dto.HousekeepingDto;
+import com.example.HotelManagementSystem.entity.Housekeeping;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.HotelManagementSystem.dto.response.APIResponse;
@@ -19,6 +21,8 @@ public interface HousekeepingServiceInt {
     APIResponse<HousekeepingDto> updateHousekeeping(Long id, HousekeepingDto housekeepingDto);
 
     APIResponse<HousekeepingDto> deleteHousekeeping(Long id);
+
+    APIResponse<List<HousekeepingDto>> searchByParams(Specification<Housekeeping> params);
 
 
 }

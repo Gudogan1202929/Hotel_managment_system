@@ -3,12 +3,15 @@ package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.dto.CancellationRequestDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.CancellationRequest;
 import com.example.HotelManagementSystem.service.CancellationRequestServiceInt;
+import com.example.HotelManagementSystem.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,4 +83,36 @@ public class CancellationRequestController {
         APIResponse<CancellationRequestDto> response = cancellationRequestServiceInt.rejectCancellationRequest(requestId);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+
+
+    //searching by parameters
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchCancellationRequest(@RequestParam(required = false) Long customerId,
+                                                           @RequestParam(required = false) Long reservationId,
+                                                           @RequestParam(required = false) String status) {
+        log.info("Request to search cancellation request by parameters: customerId={}, reservationId={}, status={}", customerId, reservationId, status);
+
+
+        Specification<CancellationRequest> spec = Specification.where(null);
+
+        if (customerId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("customerId"), customerId));
+        }
+
+        if (reservationId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("reservationId"), reservationId));
+        }
+
+        if (status != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), status));
+        }
+
+        APIResponse<List<CancellationRequestDto>> response = cancellationRequestServiceInt.searchByParams(spec);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+
+
 }

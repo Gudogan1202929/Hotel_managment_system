@@ -3,10 +3,12 @@ package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.dto.EmployeeDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.Employee;
 import com.example.HotelManagementSystem.service.EmployeeServiceInt;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,4 +60,46 @@ public class EmployeeController {
         APIResponse<EmployeeDto> response = employeeService.deleteEmployee(id);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchEmployee(@RequestParam(required = false) String firstName,
+                                                 @RequestParam(required = false) String lastName,
+                                                 @RequestParam(required = false) String position,
+                                                 @RequestParam(required = false) String phone,
+                                                    @RequestParam(required = false) String address){
+        log.info("Request to search employee by parameters: firstName={}, lastName={}, position={}, phone={}, address={}", firstName, lastName, position, phone, address);
+
+        Specification<Employee> spec = Specification.where(null);
+
+
+        if (firstName != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("firstName"), firstName));
+        }
+
+        if (lastName != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("lastName"), lastName));
+        }
+
+        if (position != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("position"), position));
+        }
+
+        if (phone != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("phone"), phone));
+        }
+
+        if (address != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("address"), address));
+        }
+
+
+        APIResponse<List<EmployeeDto>> response = employeeService.searchByParams(spec);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+
 }

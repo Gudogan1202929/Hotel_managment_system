@@ -3,10 +3,12 @@ package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.dto.InvoiceDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.Invoice;
 import com.example.HotelManagementSystem.service.InvoiceServiceInt;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,4 +60,38 @@ public class InvoiceController {
         APIResponse<InvoiceDto> response = invoiceService.deleteInvoice(id);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+
+
+
+    public ResponseEntity<Object> searchInvoice(@RequestParam(required = false) Long reservationId,
+                                                 @RequestParam(required = false) Double amount,
+                                                 @RequestParam(required = false) String status) {
+        log.info("Request to search invoice by parameters: reservationId={}, amount={}, status={}", reservationId, amount, status);
+
+         Specification<Invoice> spec = Specification.where(null);
+
+
+         if (reservationId != null) {
+             spec = spec.and((root, query, cb) -> cb.equal(root.get("reservation").get("id"), reservationId));
+         }
+
+         if (amount != null) {
+             spec = spec.and((root, query, cb) -> cb.equal(root.get("amount"), amount));
+         }
+
+         if (status != null) {
+             spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), status));
+         }
+
+
+
+        APIResponse<List<InvoiceDto>> response = invoiceService.searchByParams(spec);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+
+
+
 }

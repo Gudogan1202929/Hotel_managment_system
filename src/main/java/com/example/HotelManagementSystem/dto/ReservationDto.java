@@ -29,4 +29,12 @@ public class ReservationDto {
     @NotNull(message = "Check-out date is required")
     private Date checkOutDate;
 
+    //expected arrival time
+    @NotNull(message = "Expected arrival time is required")
+    private Date expectedArrivalTime;
+
+    //expected leaving time
+    @NotNull(message = "Expected leaving time is required")
+    private Date expectedLeavingTime;
+
 }

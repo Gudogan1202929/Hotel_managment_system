@@ -3,10 +3,12 @@ package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.dto.HousekeepingDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.Housekeeping;
 import com.example.HotelManagementSystem.service.HousekeepingServiceInt;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,4 +60,40 @@ public class HousekeepingController {
         APIResponse<HousekeepingDto> response = housekeepingService.deleteHousekeeping(id);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchHousekeepingTask(@RequestParam(required = false) Long roomId,
+                                                         @RequestParam(required = false) Long employeeId,
+                                                         @RequestParam(required = false) String status,
+                                                         @RequestParam(required = false) String taskDate) {
+        log.info("Request to search housekeeping task by parameters: roomId={}, employeeId={}, status={}, taskDate={}", roomId, employeeId, status, taskDate);
+
+         Specification<Housekeeping> spec = Specification.where(null);
+
+
+         if (roomId != null) {
+             spec = spec.and((root, query, cb) -> cb.equal(root.get("roomId"), roomId));
+         }
+
+         if (employeeId != null) {
+             spec = spec.and((root, query, cb) -> cb.equal(root.get("employeeId"), employeeId));
+         }
+
+         if (status != null) {
+             spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), status));
+         }
+
+         if (taskDate != null) {
+             spec = spec.and((root, query, cb) -> cb.equal(root.get("taskDate"), taskDate));
+         }
+
+
+         APIResponse<List<HousekeepingDto>> response = housekeepingService.searchByParams(spec);
+
+         return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+
 }

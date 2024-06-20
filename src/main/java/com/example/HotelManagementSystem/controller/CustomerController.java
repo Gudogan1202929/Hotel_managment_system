@@ -2,10 +2,12 @@ package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.dto.CustomerDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.Customer;
 import com.example.HotelManagementSystem.service.CustomerServiceInt;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,4 +59,41 @@ public class CustomerController {
         APIResponse<CustomerDto> response = customerService.deleteCustomer(id);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchCustomer(@RequestParam(required = false) String firstName,
+                                                 @RequestParam(required = false) String lastName,
+                                                 @RequestParam(required = false) String phone,
+                                                    @RequestParam(required = false) String address) {
+        log.info("Request to search customer by parameters: firstName={}, lastName={}, phone={}, address={}", firstName, lastName, phone, address);
+
+        Specification<Customer> spec = Specification.where(null);
+
+
+        if (firstName != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("firstName"), firstName));
+        }
+
+        if (lastName != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("lastName"), lastName));
+        }
+
+        if (phone != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("phone"), phone));
+        }
+
+        if (address != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("address"), address));
+        }
+
+
+        APIResponse<List<CustomerDto>> response = customerService.searchByParams(spec);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+
+
 }

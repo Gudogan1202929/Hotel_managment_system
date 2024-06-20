@@ -3,10 +3,12 @@ package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.dto.RoomDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.Room;
 import com.example.HotelManagementSystem.service.RoomServiceInt;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,4 +60,45 @@ public class RoomController {
         APIResponse<RoomDto> response = roomService.deleteRoom(id);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchRoom(@RequestParam(required = false) String floorNumber,
+                                             @RequestParam(required = false) String roomStatus,
+                                             @RequestParam(required = false) String roomNumber,
+                                             @RequestParam(required = false) String bedNumber,
+                                             @RequestParam(required = false) String info) {
+        log.info("Request to search room by parameters: floorNumber={}, roomStatus={}, roomNumber={}, bedNumber={}, info={}", floorNumber, roomStatus, roomNumber, bedNumber, info);
+
+        Specification<Room> spec = Specification.where(null);
+
+        if (floorNumber != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("floorNumber"), floorNumber));
+        }
+
+        if (roomStatus != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("roomStatus"), roomStatus));
+        }
+
+        if (roomNumber != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("roomNumber"), roomNumber));
+        }
+
+        if (bedNumber != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("bedNumber"), bedNumber));
+        }
+
+        if (info != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("info"), info));
+        }
+
+
+        APIResponse<List<RoomDto>> response = roomService.searchByParams(spec);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+
 }

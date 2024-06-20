@@ -2,6 +2,8 @@ package com.example.HotelManagementSystem.service;
 
 import com.example.HotelManagementSystem.dto.RoomDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.Room;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,4 +21,8 @@ public interface RoomServiceInt {
 
     APIResponse<RoomDto> deleteRoom(Long id);
 
+    APIResponse<List<RoomDto>> searchByParams(Specification<Room> params);
+
 }
+
+

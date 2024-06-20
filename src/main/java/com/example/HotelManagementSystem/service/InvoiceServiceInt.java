@@ -2,6 +2,8 @@ package com.example.HotelManagementSystem.service;
 
 import com.example.HotelManagementSystem.dto.InvoiceDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
+import com.example.HotelManagementSystem.entity.Invoice;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,8 @@ public interface InvoiceServiceInt {
     APIResponse<InvoiceDto> updateInvoice(Long id, InvoiceDto invoiceDto);
 
     APIResponse<InvoiceDto> deleteInvoice(Long id);
+
+    APIResponse<List<InvoiceDto>> searchByParams(Specification<Invoice> params);
 
 
 
