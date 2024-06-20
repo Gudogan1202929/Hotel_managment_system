@@ -58,4 +58,25 @@ public class ReservationController {
         APIResponse<ReservationDto> response = reservationService.deleteReservation(id);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+    @PostMapping("/{id}/checkin")
+    public ResponseEntity<Object> checkIn(@PathVariable Long id) {
+        log.info("Request to check in reservation by id: {}", id);
+        APIResponse<ReservationDto> response = reservationService.checkIn(id);
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @PostMapping("/{id}/checkout")
+    public ResponseEntity<Object> checkOut(@PathVariable Long id) {
+        log.info("Request to check out reservation by id: {}", id);
+        APIResponse<ReservationDto> response = reservationService.checkOut(id);
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @PostMapping("{reservationId}/request-cancellation")
+    public ResponseEntity<Object> requestCancellation(@PathVariable Long reservationId) {
+        log.info("Request to cancel reservation by id: {}", reservationId);
+        APIResponse<ReservationDto> response = reservationService.requestCancellation(reservationId);
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
 }

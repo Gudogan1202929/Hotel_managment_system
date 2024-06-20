@@ -46,8 +46,12 @@ public class ServiceProvider {
                 (requestUri.contains(SystemPaths.SIGNUP) && ipAddress != null) ||
                 (requestUri.contains(SystemPaths.CHANGEPASSWORD) && ipAddress != null) ||
                 (requestUri.contains(SystemPaths.CHANGEUSERNAME) && ipAddress != null) ||
-                (requestUri.contains(SystemPaths.CHANGEROLE) && ipAddress != null)
-        ) {
+                (requestUri.contains(SystemPaths.CHANGEROLE) && ipAddress != null ) ||
+                (requestUri.contains("/swagger-ui/index.html"))
+                        || requestUri.contains("/swagger-ui/swagger-initializer.js") ||
+                requestUri.contains("/v3/api-docs/swagger-config") ||
+                        requestUri.contains("/v3/api-docs")){
+
             isAllowed = true;
         } else if (check.CheckJWTIfForUser(authorization) && ipAddress != null) {
             String roleOfToken = null;
@@ -57,11 +61,11 @@ public class ServiceProvider {
             List<RollesAllowed> listOfRolls = new ArrayList<>();
 
             RollesAllowed Admin = new RollesAllowed(SystemConstants.ADMIN);
-            Admin.getPaths().add("/");
+            Admin.getPaths().add("/api/v1/employees");
             listOfRolls.add(Admin);
 
             RollesAllowed User = new RollesAllowed(SystemConstants.USER);
-            User.getPaths().add("/");
+            User.getPaths().add("");
             listOfRolls.add(User);
 
             for (RollesAllowed item : listOfRolls) {
@@ -154,7 +158,6 @@ public class ServiceProvider {
 
         String entity = "";
         if (statusCode == 200 || statusCode == 201 || statusCode == 202) {
-            System.out.println("Response is OK and fuck you");
         } else {
             if (!response.isCommitted()) {
                 response.resetBuffer();

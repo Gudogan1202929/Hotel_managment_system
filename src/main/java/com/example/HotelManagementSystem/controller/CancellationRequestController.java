@@ -4,6 +4,8 @@ package com.example.HotelManagementSystem.controller;
 import com.example.HotelManagementSystem.dto.CancellationRequestDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.service.CancellationRequestServiceInt;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/CancellationRequest")
+@Tag(name = "example", description = "the example API")
 public class CancellationRequestController {
 
     private final CancellationRequestServiceInt cancellationRequestServiceInt;
@@ -24,7 +27,9 @@ public class CancellationRequestController {
         this.cancellationRequestServiceInt = cancellationRequestServiceInt;
     }
 
+
     @GetMapping
+    @Operation(summary = "Example endpoint", description = "Description of the example endpoint")
     public ResponseEntity<Object> getAllCancellationRequest() {
         log.info("Request to get all cancellation request");
         APIResponse<List<CancellationRequestDto>> response = cancellationRequestServiceInt.getAllCancellations();
@@ -58,6 +63,21 @@ public class CancellationRequestController {
     public ResponseEntity<Object> deleteCustomer(@PathVariable Long id) {
         log.info("Request to delete cancellation request by id: {}", id);
         APIResponse<CancellationRequestDto> response = cancellationRequestServiceInt.deleteCancellationRequest(id);
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @PostMapping("/{requestId}/approve")
+    public ResponseEntity<Object> approveCancellationRequest(@PathVariable Long requestId) {
+        log.info("Request to approve cancellation request by id: {}", requestId);
+        APIResponse<CancellationRequestDto> response = cancellationRequestServiceInt.approveCancellationRequest(requestId);
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+
+    @PostMapping("/{requestId}/reject")
+    public ResponseEntity<Object> rejectCancellationRequest(@PathVariable Long requestId) {
+        log.info("Request to reject cancellation request by id: {}", requestId);
+        APIResponse<CancellationRequestDto> response = cancellationRequestServiceInt.rejectCancellationRequest(requestId);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }

@@ -160,7 +160,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-
     /**
      * Handle all other internal exceptions. This is a fallback for all other internal exceptions that don't have a specific handler.
      *
@@ -241,11 +240,4 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         APIResponse<Object> response = APIResponse.badRequest(null, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
-
-
-
-
-
-
-
 }

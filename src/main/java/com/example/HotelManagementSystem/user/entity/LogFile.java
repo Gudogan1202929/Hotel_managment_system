@@ -20,7 +20,7 @@ public class LogFile {
     @Column(name = "time", nullable = false, columnDefinition = "TEXT")
     private String time;
 
-    @Column(name = "ip", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "ip", columnDefinition = "TEXT")
     private String ip;
 
     @Column(name = "URL", columnDefinition = "TEXT")

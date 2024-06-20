@@ -30,10 +30,10 @@ public class Reservation {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @Column(name = "check_in_date", nullable = false)
+    @Column(name = "check_in_date")
     private Date checkInDate;
 
-    @Column(name = "check_out_date", nullable = false)
+    @Column(name = "check_out_date")
     private Date checkOutDate;
 
     @Column(name = "created_at", insertable = false, updatable = false, nullable = false)
@@ -42,7 +42,6 @@ public class Reservation {
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private List<CancellationRequest> cancellationRequests;
-
 
     @PrePersist
     public void prePersist() {

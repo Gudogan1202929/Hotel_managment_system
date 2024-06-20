@@ -3,9 +3,12 @@ package com.example.HotelManagementSystem.service.impl;
 import com.example.HotelManagementSystem.dto.CancellationRequestDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.CancellationRequest;
+import com.example.HotelManagementSystem.entity.Reservation;
+import com.example.HotelManagementSystem.entity.Room;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.exception.ResourceNotFoundException;
 import com.example.HotelManagementSystem.repository.CancellationRequestRepo;
+import com.example.HotelManagementSystem.repository.RoomRepo;
 import com.example.HotelManagementSystem.repository.RoomReservationRepo;
 import com.example.HotelManagementSystem.service.CancellationRequestServiceInt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +21,14 @@ public class CancellationRequestService implements CancellationRequestServiceInt
 
     private final CancellationRequestRepo cancellationRequestRepo;
     private final RoomReservationRepo roomReservationRepo;
+    private final RoomRepo roomRepo;
 
 
     @Autowired
-    public CancellationRequestService(CancellationRequestRepo cancellationRequestRepo, RoomReservationRepo roomReservationRepo) {
+    public CancellationRequestService(RoomRepo roomRepo , CancellationRequestRepo cancellationRequestRepo, RoomReservationRepo roomReservationRepo) {
         this.cancellationRequestRepo = cancellationRequestRepo;
         this.roomReservationRepo = roomReservationRepo;
+        this.roomRepo = roomRepo;
     }
 
     @Override
@@ -157,6 +162,72 @@ public class CancellationRequestService implements CancellationRequestServiceInt
     }
 
 
+    @Override
+    public APIResponse<CancellationRequestDto> approveCancellationRequest(Long requestId) {
+
+        CancellationRequest cancellationRequest = cancellationRequestRepo.findById(requestId).orElse(null);
+
+        if (cancellationRequest == null) {
+            throw new ResourceNotFoundException(CancellationRequest.class, "id", requestId.toString());
+        }
+
+        if (cancellationRequest.getStatus() != CancellationRequest.Status.PENDING) {
+            throw new BadRequestException("Cancellation request is not pending");
+        }
+
+        // Retrieve the reservation to be cancelled
+        Reservation reservation = cancellationRequest.getReservation();
+
+        if (reservation == null) {
+            throw new ResourceNotFoundException(Reservation.class, "id", cancellationRequest.getReservation().getId().toString());
+        }
+
+        // Update the room status to AVAILABLE
+        Room room = reservation.getRoom();
+        room.setRoomStatus("AVAILABLE");
+        roomRepo.save(room);
+
+        // Delete the reservation
+        roomReservationRepo.delete(reservation);
+
+        // Update the cancellation request status to APPROVED
+        cancellationRequest.setStatus(CancellationRequest.Status.APPROVED);
+        cancellationRequest = cancellationRequestRepo.save(cancellationRequest);
+
+        CancellationRequestDto cancellationRequestDto = CancellationRequestDto.builder()
+                .id(cancellationRequest.getId())
+                .reservationId(cancellationRequest.getReservation().getId())
+                .status(cancellationRequest.getStatus())
+                .requestedAt(cancellationRequest.getRequestedAt())
+                .build();
+
+        return APIResponse.ok(cancellationRequestDto, "Cancellation request approved successfully");
+    }
 
 
+    @Override
+    public APIResponse<CancellationRequestDto> rejectCancellationRequest(Long requestId) {
+
+        CancellationRequest cancellationRequest = cancellationRequestRepo.findById(requestId).orElse(null);
+
+        if (cancellationRequest == null) {
+            throw new ResourceNotFoundException(CancellationRequest.class, "id", requestId.toString());
+        }
+
+        if (cancellationRequest.getStatus() != CancellationRequest.Status.PENDING) {
+            throw new BadRequestException("Cancellation request is not pending");
+        }
+
+        cancellationRequest.setStatus(CancellationRequest.Status.REJECTED);
+        cancellationRequest = cancellationRequestRepo.save(cancellationRequest);
+
+        CancellationRequestDto cancellationRequestDto = CancellationRequestDto.builder()
+                .id(cancellationRequest.getId())
+                .reservationId(cancellationRequest.getReservation().getId())
+                .status(cancellationRequest.getStatus())
+                .requestedAt(cancellationRequest.getRequestedAt())
+                .build();
+
+        return APIResponse.ok(cancellationRequestDto, "Cancellation request rejected successfully");
+    }
 }

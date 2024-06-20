@@ -1,11 +1,13 @@
 package com.example.HotelManagementSystem.service.impl;
 
 import com.example.HotelManagementSystem.dto.ReservationDto;
+import com.example.HotelManagementSystem.entity.CancellationRequest;
 import com.example.HotelManagementSystem.entity.Customer;
 import com.example.HotelManagementSystem.entity.Reservation;
 import com.example.HotelManagementSystem.entity.Room;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.exception.ResourceNotFoundException;
+import com.example.HotelManagementSystem.repository.CancellationRequestRepo;
 import com.example.HotelManagementSystem.repository.CustomerRepo;
 import com.example.HotelManagementSystem.repository.RoomRepo;
 import com.example.HotelManagementSystem.repository.RoomReservationRepo;
@@ -15,23 +17,23 @@ import org.springframework.stereotype.Service;
 
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class ReservationService implements ReservationServiceInt {
 
-
     private final RoomReservationRepo reservationRepo;
     private final CustomerRepo customerRepo;
     private final RoomRepo roomRepo;
-
-
+    private final CancellationRequestRepo cancellationRequestRepo;
 
     @Autowired
-    public ReservationService(RoomReservationRepo reservationRepo, CustomerRepo customerRepo, RoomRepo roomRepo) {
+    public ReservationService(CancellationRequestRepo cancellationRequestRepo,RoomReservationRepo reservationRepo, CustomerRepo customerRepo, RoomRepo roomRepo) {
         this.reservationRepo = reservationRepo;
         this.customerRepo = customerRepo;
         this.roomRepo = roomRepo;
+        this.cancellationRequestRepo = cancellationRequestRepo;
     }
 
     @Override
@@ -50,7 +52,6 @@ public class ReservationService implements ReservationServiceInt {
                 .toList();
 
         return APIResponse.ok(reservationDtoList, "Reservations fetched successfully");
-
     }
 
     @Override
@@ -80,14 +81,19 @@ public class ReservationService implements ReservationServiceInt {
             throw new IllegalArgumentException("Id should be null when creating a new reservation");
         }
 
-        //check if the cusromer exists
+        //check if the customer exists
         if (customerRepo.findById(reservationDto.getCustomerId()).isEmpty()) {
             throw new ResourceNotFoundException(Reservation.class, "customerId", reservationDto.getCustomerId().toString());
         }
 
         //check if the room exists
-        if (roomRepo.findById(reservationDto.getRoomId()).isEmpty()) {
-            throw new ResourceNotFoundException(Reservation.class, "roomId", reservationDto.getRoomId().toString());
+        Room room = roomRepo.findById(reservationDto.getRoomId()).orElseThrow(() ->
+                new ResourceNotFoundException(Reservation.class, "roomId", reservationDto.getRoomId().toString())
+        );
+
+        //check if the room is already reserved
+        if ("RESERVED".equals(room.getRoomStatus())) {
+            throw new BadRequestException("Room is already reserved");
         }
 
         //check if the room is already reserved in the given date range
@@ -95,9 +101,7 @@ public class ReservationService implements ReservationServiceInt {
             throw new BadRequestException("Room is already reserved in the given date range");
         }
 
-
         Customer customer = customerRepo.findById(reservationDto.getCustomerId()).get();
-        Room room = roomRepo.findById(reservationDto.getRoomId()).get();
 
         Reservation reservation = Reservation.builder()
                 .customer(customer)
@@ -107,6 +111,10 @@ public class ReservationService implements ReservationServiceInt {
                 .build();
 
         reservation = reservationRepo.save(reservation);
+
+        // Update room status to RESERVED
+        room.setRoomStatus("RESERVED");
+        roomRepo.save(room);
 
         ReservationDto savedReservationDto = ReservationDto.builder()
                 .id(reservation.getId())
@@ -123,20 +131,23 @@ public class ReservationService implements ReservationServiceInt {
     public APIResponse<ReservationDto> updateReservation(Long id, ReservationDto reservationDto) {
 
         //check if the reservation exists
-        Reservation reservation = reservationRepo.findById(id).orElse(null);
+        Reservation reservation = reservationRepo.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(Reservation.class, "id", id.toString())
+        );
 
-        if (reservation == null) {
-            throw new ResourceNotFoundException(Reservation.class, "id", id.toString());
-        }
-
-        //check if the cusromer exists
+        //check if the customer exists
         if (customerRepo.findById(reservationDto.getCustomerId()).isEmpty()) {
             throw new ResourceNotFoundException(Reservation.class, "customerId", reservationDto.getCustomerId().toString());
         }
 
         //check if the room exists
-        if (roomRepo.findById(reservation.getId()).isEmpty()) {
-            throw new ResourceNotFoundException(Reservation.class, "roomId", reservationDto.getRoomId().toString());
+        Room room = roomRepo.findById(reservationDto.getRoomId()).orElseThrow(() ->
+                new ResourceNotFoundException(Reservation.class, "roomId", reservationDto.getRoomId().toString())
+        );
+
+        //check if the room is already reserved
+        if ("RESERVED".equals(room.getRoomStatus())) {
+            throw new BadRequestException("Room is already reserved");
         }
 
         //check if the room is already reserved in the given date range
@@ -144,17 +155,18 @@ public class ReservationService implements ReservationServiceInt {
             throw new BadRequestException("Room is already reserved in the given date range");
         }
 
-        Customer customer = customerRepo.findById(reservation
-                .getCustomer().getId()).get();
-        Room room = roomRepo.findById(reservation.getRoom().getId()).get();
+        Customer customer = customerRepo.findById(reservationDto.getCustomerId()).get();
 
         reservation.setCustomer(customer);
         reservation.setRoom(room);
-
         reservation.setCheckInDate(reservationDto.getCheckInDate());
         reservation.setCheckOutDate(reservationDto.getCheckOutDate());
 
         reservation = reservationRepo.save(reservation);
+
+        // Update room status to RESERVED
+        room.setRoomStatus("RESERVED");
+        roomRepo.save(room);
 
         ReservationDto updatedReservationDto = ReservationDto.builder()
                 .id(reservation.getId())
@@ -165,20 +177,68 @@ public class ReservationService implements ReservationServiceInt {
                 .build();
 
         return APIResponse.ok(updatedReservationDto, "Reservation updated successfully");
-
     }
 
     @Override
     public APIResponse<ReservationDto> deleteReservation(Long id) {
-        Reservation reservation = reservationRepo.findById(id).orElse(null);
-
-        if (reservation == null) {
-            throw new ResourceNotFoundException(Reservation.class, "id", id.toString());
-        }
+        Reservation reservation = reservationRepo.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(Reservation.class, "id", id.toString())
+        );
 
         reservationRepo.delete(reservation);
 
         return APIResponse.ok(null, "Reservation deleted successfully");
+    }
+
+    @Override
+    public APIResponse<ReservationDto> checkIn(Long reservationId) {
+        Reservation reservation = reservationRepo.findById(reservationId).orElseThrow(() ->
+                new ResourceNotFoundException(Reservation.class, "id", reservationId.toString())
+        );
+
+        Room room = reservation.getRoom();
+        room.setRoomStatus("RESERVED");
+        roomRepo.save(room);
+
+        reservation.setCheckInDate(new Date());
+        reservationRepo.save(reservation);
+        return APIResponse.ok(null, "Checked in successfully");
+    }
+
+    @Override
+    public APIResponse<ReservationDto> checkOut(Long reservationId) {
+        Reservation reservation = reservationRepo.findById(reservationId).orElseThrow(() ->
+                new ResourceNotFoundException(Reservation.class, "id", reservationId.toString())
+        );
+
+        Room room = reservation.getRoom();
+        room.setRoomStatus("AVAILABLE");
+        roomRepo.save(room);
+
+        reservation.setCheckOutDate(new Date());
+        reservationRepo.save(reservation);
+        return APIResponse.ok(null, "Checked out successfully");
+    }
+
+    @Override
+    public APIResponse<ReservationDto> requestCancellation(Long reservationId) {
+        Reservation reservation = reservationRepo.findById(reservationId).orElseThrow(() ->
+                new ResourceNotFoundException(Reservation.class, "id", reservationId.toString())
+        );
+
+        if (reservation.getCheckInDate().before(new Date())) {
+            throw new BadRequestException("Cannot cancel reservation after check-in date");
+        }
+
+        if (cancellationRequestRepo.existsByReservationId(reservationId)) {
+            throw new BadRequestException("Cancellation request already exists for this reservation");
+        }
+
+        cancellationRequestRepo.save(CancellationRequest.builder()
+                .reservation(reservation)
+                .build());
+
+        return APIResponse.ok(null, "Cancellation request created successfully");
     }
 
 

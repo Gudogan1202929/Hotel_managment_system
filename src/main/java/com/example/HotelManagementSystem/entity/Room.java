@@ -28,13 +28,15 @@ public class Room {
     @JoinColumn(name = "room_class_id", nullable = false)
     private RoomClass roomClass;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private RoomStatus roomStatus;
+    @Enumerated
+    @Column(name = "room_status", nullable = false)
+    private String roomStatus;
 
     @Column(name = "room_number", nullable = false)
     private Integer roomNumber;
 
     @OneToMany(mappedBy = "room")
     private List<Reservation> reservations;
+
+
 }

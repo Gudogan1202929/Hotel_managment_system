@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.service;
 
 import com.example.HotelManagementSystem.dto.CancellationRequestDto;
+import com.example.HotelManagementSystem.dto.ReservationDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,7 @@ public interface CancellationRequestServiceInt {
 
     APIResponse<CancellationRequestDto> deleteCancellationRequest(Long id);
 
+    APIResponse<CancellationRequestDto>  approveCancellationRequest(Long requestId) ;
+
+    APIResponse<CancellationRequestDto> rejectCancellationRequest(Long requestId);
 }

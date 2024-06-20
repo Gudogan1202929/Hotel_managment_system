@@ -4,7 +4,6 @@ import com.example.HotelManagementSystem.dto.RoomDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.Room;
 import com.example.HotelManagementSystem.entity.RoomClass;
-import com.example.HotelManagementSystem.entity.RoomStatus;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.exception.ResourceNotFoundException;
 import com.example.HotelManagementSystem.repository.*;
