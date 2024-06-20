@@ -121,6 +121,7 @@ public class ReservationService implements ReservationServiceInt {
         room.setRoomStatus("RESERVED");
         roomRepo.save(room);
 
+
         ReservationDto savedReservationDto = ReservationDto.builder()
                 .id(reservation.getId())
                 .roomId(reservation.getRoom().getId())
