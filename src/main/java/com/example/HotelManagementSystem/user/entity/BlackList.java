@@ -21,5 +21,4 @@ public class BlackList {
                 nullable = false,
                 columnDefinition = "TEXT")
         private String token;
-
 }
