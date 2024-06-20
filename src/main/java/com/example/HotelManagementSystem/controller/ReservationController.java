@@ -5,6 +5,8 @@ import com.example.HotelManagementSystem.dto.ReservationDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.Reservation;
 import com.example.HotelManagementSystem.service.ReservationServiceInt;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@Tag(name = "Reservation", description = "All reservation related endpoints")
 @RequestMapping(value = "/api/v1/reservations")
 public class ReservationController {
 
@@ -26,6 +29,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
+    @Operation(summary = "Retriving all reservations", description = "This endpoint is used to get all reservations")
     @GetMapping
     public ResponseEntity<Object> getAllReservations() {
         log.info("Request to get all reservations");
@@ -33,6 +37,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Create new reservation", description = "This endpoint used for adding new reservation")
     @PostMapping
     public ResponseEntity<Object> createReservation(@Valid @RequestBody ReservationDto reservationDto) {
         log.info("Request to create a new reservation: {}", reservationDto);
@@ -40,6 +45,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Get reservation by id", description = "This endpoint is used to get reservation by id")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getReservationById(@PathVariable Long id) {
         log.info("Request to get reservation by id: {}", id);
@@ -47,6 +53,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Update reservation by id", description = "This endpoint is used to update reservation by id")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateReservation(@PathVariable Long id, @Valid @RequestBody ReservationDto reservationDto) {
         log.info("Request to update reservation by id: {}", id);
@@ -54,6 +61,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Delete reservation by id", description = "This endpoint is used to delete reservation by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteReservation(@PathVariable Long id) {
         log.info("Request to delete reservation by id: {}", id);
@@ -61,6 +69,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Check in reservation by id", description = "This endpoint is used to check in reservation by id")
     @PostMapping("/{id}/checkin")
     public ResponseEntity<Object> checkIn(@PathVariable Long id) {
         log.info("Request to check in reservation by id: {}", id);
@@ -68,6 +77,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Check out reservation by id", description = "This endpoint is used to check out reservation by id")
     @PostMapping("/{id}/checkout")
     public ResponseEntity<Object> checkOut(@PathVariable Long id) {
         log.info("Request to check out reservation by id: {}", id);
@@ -75,6 +85,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Request cancellation of reservation by id", description = "This endpoint is used to request cancellation of reservation by id")
     @PostMapping("{reservationId}/request-cancellation")
     public ResponseEntity<Object> requestCancellation(@PathVariable Long reservationId) {
         log.info("Request to cancel reservation by id: {}", reservationId);
@@ -82,7 +93,7 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-
+    @Operation(summary = "Approve cancellation of reservation by id", description = "This endpoint is used to approve cancellation of reservation by id")
     @GetMapping("/search")
     public ResponseEntity<Object> searchReservation(@RequestParam(required = false) Long customerId,
                                                    @RequestParam(required = false) Long roomId,
@@ -129,5 +140,4 @@ public class ReservationController {
 
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
-
 }

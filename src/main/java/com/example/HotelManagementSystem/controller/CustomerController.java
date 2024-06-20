@@ -4,6 +4,8 @@ import com.example.HotelManagementSystem.dto.CustomerDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.Customer;
 import com.example.HotelManagementSystem.service.CustomerServiceInt;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@Tag(name = "Customer", description = "All customer related endpoints")
 @RequestMapping(value = "/api/v1/customers")
 public class CustomerController {
 
@@ -25,6 +28,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    @Operation(summary = "Retriving all customers", description = "This endpoint is used to get all customers")
     @GetMapping
     public ResponseEntity<Object> getAllCustomers() {
         log.info("Request to get all customers");
@@ -32,6 +36,7 @@ public class CustomerController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Create new customer", description = "This endpoint used for adding new customer")
     @PostMapping
     public ResponseEntity<Object> createCustomer(@Valid @RequestBody CustomerDto customerDto) {
         log.info("Request to create a new customer: {}", customerDto);
@@ -39,6 +44,7 @@ public class CustomerController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Get customer by id", description = "This endpoint is used to get customer by id")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCustomerById(@PathVariable Long id) {
         log.info("Request to get customer by id: {}", id);
@@ -46,6 +52,7 @@ public class CustomerController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Update customer by id", description = "This endpoint is used to update customer by id")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDto customerDto) {
         log.info("Request to update customer by id: {}", id);
@@ -53,6 +60,7 @@ public class CustomerController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Delete customer by id", description = "This endpoint is used to delete customer by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCustomer(@PathVariable Long id) {
         log.info("Request to delete customer by id: {}", id);
@@ -61,7 +69,7 @@ public class CustomerController {
     }
 
 
-
+    @Operation(summary = "Search customer by parameters", description = "This endpoint is used to search customer by parameters")
     @GetMapping("/search")
     public ResponseEntity<Object> searchCustomer(@RequestParam(required = false) String firstName,
                                                  @RequestParam(required = false) String lastName,
@@ -93,7 +101,4 @@ public class CustomerController {
 
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
-
-
-
 }

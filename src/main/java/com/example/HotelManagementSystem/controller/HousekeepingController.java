@@ -5,6 +5,8 @@ import com.example.HotelManagementSystem.dto.HousekeepingDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.Housekeeping;
 import com.example.HotelManagementSystem.service.HousekeepingServiceInt;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@Tag(name = "Housekeeping", description = "All housekeeping related endpoints")
 @RequestMapping(value = "/api/v1/housekeeping")
 public class HousekeepingController {
 
@@ -26,6 +29,7 @@ public class HousekeepingController {
         this.housekeepingService = housekeepingService;
     }
 
+    @Operation(summary = "Retriving all housekeeping tasks", description = "This endpoint is used to get all housekeeping tasks")
     @GetMapping
     public ResponseEntity<Object> getAllHousekeepingTasks() {
         log.info("Request to get all housekeeping tasks");
@@ -33,6 +37,7 @@ public class HousekeepingController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+@Operation(summary = "Create new housekeeping task", description = "This endpoint used for adding new housekeeping task")
     @PostMapping
     public ResponseEntity<Object> createHousekeepingTask(@Valid @RequestBody HousekeepingDto housekeepingDto) {
         log.info("Request to create a new housekeeping task: {}", housekeepingDto);
@@ -40,6 +45,7 @@ public class HousekeepingController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+@Operation(summary = "Get housekeeping task by id", description = "This endpoint is used to get housekeeping task by id")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getHousekeepingTaskById(@PathVariable Long id) {
         log.info("Request to get housekeeping task by id: {}", id);
@@ -47,6 +53,7 @@ public class HousekeepingController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Update housekeeping task by id", description = "This endpoint is used to update housekeeping task by id")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateHousekeepingTask(@PathVariable Long id, @Valid @RequestBody HousekeepingDto housekeepingDto) {
         log.info("Request to update housekeeping task by id: {}", id);
@@ -54,6 +61,7 @@ public class HousekeepingController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Delete housekeeping task by id", description = "This endpoint is used to delete housekeeping task by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteHousekeepingTask(@PathVariable Long id) {
         log.info("Request to delete housekeeping task by id: {}", id);
@@ -61,8 +69,7 @@ public class HousekeepingController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-
-
+    @Operation(summary = "Search housekeeping task by parameters", description = "This endpoint is used to search housekeeping task by parameters")
     @GetMapping("/search")
     public ResponseEntity<Object> searchHousekeepingTask(@RequestParam(required = false) Long roomId,
                                                          @RequestParam(required = false) Long employeeId,
@@ -94,6 +101,4 @@ public class HousekeepingController {
 
          return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
-
-
 }

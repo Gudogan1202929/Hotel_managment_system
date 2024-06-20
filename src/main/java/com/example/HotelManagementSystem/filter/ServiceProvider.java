@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 public class ServiceProvider {
@@ -36,50 +37,112 @@ public class ServiceProvider {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+
         String ipAddress = request.getHeader(SystemConstants.IP_HEADER);
         String requestUri = request.getRequestURI();
-        String authorization = request.getHeader(SystemConstants.TOKEN_NAME_ON_HEADER);
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            authorizationHeader = authorizationHeader.substring(7).trim();
+            System.out.println(authorizationHeader);
+        }
 
         boolean isAllowed = false;
 
-        if ((requestUri.contains(SystemPaths.LOGIN_PATH) && ipAddress != null) ||
-                (requestUri.contains(SystemPaths.SIGNUP) && ipAddress != null) ||
-                (requestUri.contains(SystemPaths.CHANGEPASSWORD) && ipAddress != null) ||
-                (requestUri.contains(SystemPaths.CHANGEUSERNAME) && ipAddress != null) ||
-                (requestUri.contains(SystemPaths.CHANGEROLE) && ipAddress != null ) ||
-                (requestUri.contains("/swagger-ui/index.html"))
-                        || requestUri.contains("/swagger-ui/swagger-initializer.js") ||
-                requestUri.contains("/v3/api-docs/swagger-config") ||
-                        requestUri.contains("/v3/api-docs")){
+        if ((requestUri.contains(SystemPaths.LOGIN_PATH))||
+                //&& ipAddress != null) ||
+                (requestUri.contains(SystemPaths.SIGNUP))
+                        //&& ipAddress != null)
+        || (requestUri.contains(SystemPaths.CHANGEPASSWORD))
+                        // && ipAddress != null)
+                         || (requestUri.contains(SystemPaths.CHANGEUSERNAME))
+                        //&& ipAddress != null)
+                        || (requestUri.contains(SystemPaths.CHANGEROLE))
+                        //&& ipAddress != null )
+                        || (requestUri.contains("/swagger-ui/index.html"))
+                        || (requestUri.contains("/swagger-ui/swagger-initializer.js")) ||
+                        (requestUri.contains("/v3/api-docs/swagger-config"))||
+                                (requestUri.contains("/v3/api-docs"))){
 
             isAllowed = true;
-        } else if (check.CheckJWTIfForUser(authorization) && ipAddress != null) {
+        } else if (check.CheckJWTIfForUser(authorizationHeader)){
+                // && ipAddress != null) {
             String roleOfToken = null;
-            if (authorization != null) {
-                roleOfToken = check.WhatRole(authorization);
+            if (authorizationHeader != null) {
+                roleOfToken = check.WhatRole(authorizationHeader);
             }
             List<RollesAllowed> listOfRolls = new ArrayList<>();
 
             RollesAllowed Admin = new RollesAllowed(SystemConstants.ADMIN);
-            Admin.getPaths().add("/api/v1/employees");
+
+            //CancellationRequest
+            Admin.getPaths().add("/api/v1/CancellationRequest.*");
+
+            //Customer
+            Admin.getPaths().add("/api/v1/customers.*");
+
+            //Employee
+            Admin.getPaths().add("/api/v1/employees.*");
+
+            //Housekeeping
+            Admin.getPaths().add("/api/v1/housekeeping.*");
+
+            //Invoice
+            Admin.getPaths().add("/api/v1/invoices.*");
+
+            //Reservation
+            Admin.getPaths().add("/api/v1/reservations.*");
+
+            //Room
+            Admin.getPaths().add("/api/v1/rooms.*");
+
+
             listOfRolls.add(Admin);
 
             RollesAllowed User = new RollesAllowed(SystemConstants.USER);
-            User.getPaths().add("");
+            //CancellationRequest
+            User.getPaths().add("/api/v1/CancellationRequest");
+            User.getPaths().add("/api/v1/CancellationRequest/\\d+");
+            User.getPaths().add("/api/v1/CancellationRequest/search");
+
+            //Customer
+            User.getPaths().add("/api/v1/customers.*");
+
+            //Employee
+            //not Authorized
+
+            //Housekeeping
+            //not Authorized
+
+            //Invoice
+            //not Authorized
+
+            //Reservation
+            User.getPaths().add("/api/v1/reservations");
+            User.getPaths().add("/api/v1/reservations/\\d+");
+            User.getPaths().add("/api/v1/reservations/search");
+            User.getPaths().add("/api/v1/reservations/\\d+/request-cancellation");
+
+            //Room
+            //not Authorized
+
+
             listOfRolls.add(User);
 
-            for (RollesAllowed item : listOfRolls) {
-                if (item.getRole().equalsIgnoreCase(roleOfToken)) {
-                    for (String path : item.getPaths()) {
-                        if (requestUri.contains(path)) {
+            System.out.println(requestUri);
+
+            for (RollesAllowed role : listOfRolls) {
+                if (role.getRole().equalsIgnoreCase(roleOfToken)) {
+                    for (String path : role.getPaths()) {
+                        if (Pattern.matches(path, requestUri)) {
                             isAllowed = true;
                             break;
                         }
                     }
                 }
             }
+
             if (!isAllowed) {
-                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
         } else {

@@ -5,6 +5,8 @@ import com.example.HotelManagementSystem.dto.EmployeeDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.Employee;
 import com.example.HotelManagementSystem.service.EmployeeServiceInt;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@Tag(name = "Employee", description = "All employee related endpoints (just for admin)")
 @RequestMapping(value = "/api/v1/employees")
 public class EmployeeController {
 
@@ -26,6 +29,7 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
+    @Operation(summary = "Retriving all employees", description = "This endpoint is used to get all employees")
     @GetMapping
     public ResponseEntity<Object> getAllEmployees() {
         log.info("Request to get all employees");
@@ -33,6 +37,7 @@ public class EmployeeController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Create new employee", description = "This endpoint used for adding new employee")
     @PostMapping
     public ResponseEntity<Object> createEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
         log.info("Request to create a new employee: {}", employeeDto);
@@ -40,6 +45,7 @@ public class EmployeeController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Get employee by id", description = "This endpoint is used to get employee by id")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getEmployeeById(@PathVariable Long id) {
         log.info("Request to get employee by id: {}", id);
@@ -47,6 +53,7 @@ public class EmployeeController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Update employee by id", description = "This endpoint is used to update employee by id")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeDto employeeDto) {
         log.info("Request to update employee by id: {}", id);
@@ -54,6 +61,7 @@ public class EmployeeController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Delete employee by id", description = "This endpoint is used to delete employee by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteEmployee(@PathVariable Long id) {
         log.info("Request to delete employee by id: {}", id);
@@ -61,9 +69,7 @@ public class EmployeeController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-
-
-
+    @Operation(summary = "Search employee by parameters", description = "This endpoint is used to search employee by parameters")
     @GetMapping("/search")
     public ResponseEntity<Object> searchEmployee(@RequestParam(required = false) String firstName,
                                                  @RequestParam(required = false) String lastName,
@@ -100,6 +106,4 @@ public class EmployeeController {
 
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
-
-
 }

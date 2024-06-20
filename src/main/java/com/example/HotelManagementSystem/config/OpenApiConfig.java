@@ -17,34 +17,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "OpenApi specification",
+                title = "OpenApi specification for Spring Security for hotel management system",
                 version = "3.0",
-                description = "OpenApi documentation for Spring Security",
+                description = "OpenApi documentation for Spring Security for hotel management system",
                 contact = @Contact(
-                        name = "Author Name",
-                        email = "contact@mail.com",
-                        url = "https://some-url.com"
-                ),
-                license = @License(
-                        name = "License Name",
-                        url = "https://some-url.com"
+                        name = "Mohammad Mosleh",
+                        email = "mohammadnmosleh123@gmail.com",
+                        url = "https://facebook/mohammadmosleh.com"
                 ),
                 termsOfService = "Terms of service"
         ),
         servers = {
                 @Server(
-                        description = "Local ENV",
+                        description = "localhost server",
                         url = "http://localhost:9096"
                 )
         },
         security = {
                 @SecurityRequirement(
-                        name = "bearerAuth"
+                        name = "BearerAuth"
                 )
         }
 )
 @SecurityScheme(
-        name = "bearerAuth",
+        name = "BearerAuth",
         description = "JWT auth description",
         scheme = "bearer",
         type = SecuritySchemeType.HTTP,

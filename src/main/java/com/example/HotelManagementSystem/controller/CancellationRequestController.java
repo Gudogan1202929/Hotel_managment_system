@@ -5,7 +5,6 @@ import com.example.HotelManagementSystem.dto.CancellationRequestDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.CancellationRequest;
 import com.example.HotelManagementSystem.service.CancellationRequestServiceInt;
-import com.example.HotelManagementSystem.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/CancellationRequest")
-@Tag(name = "example", description = "the example API")
+@Tag(name = "CancellationRequest", description = "All cancellation request related endpoints")
 public class CancellationRequestController {
 
     private final CancellationRequestServiceInt cancellationRequestServiceInt;
@@ -30,9 +29,8 @@ public class CancellationRequestController {
         this.cancellationRequestServiceInt = cancellationRequestServiceInt;
     }
 
-
     @GetMapping
-    @Operation(summary = "Example endpoint", description = "Description of the example endpoint")
+    @Operation(summary = "Retriving all cancellation request", description = "This endpoint is used to get all cancellation request")
     public ResponseEntity<Object> getAllCancellationRequest() {
         log.info("Request to get all cancellation request");
         APIResponse<List<CancellationRequestDto>> response = cancellationRequestServiceInt.getAllCancellations();
@@ -40,6 +38,7 @@ public class CancellationRequestController {
     }
 
 
+    @Operation(summary = "Create new cancellation request", description = "This endpoint used for adding new cancellation request")
     @PostMapping
     public ResponseEntity<Object> createCancellationRequest(@Valid @RequestBody CancellationRequestDto cancellationRequestDto) {
         log.info("Request to create a new cancellation request: {}", cancellationRequestDto);
@@ -48,6 +47,7 @@ public class CancellationRequestController {
     }
 
 
+    @Operation(summary = "Get cancellation request by id", description = "This endpoint is used to get cancellation request by id")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCancellationRequestById(@PathVariable Long id) {
         log.info("Request to get cancellation request by id: {}", id);
@@ -55,6 +55,7 @@ public class CancellationRequestController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Update cancellation request by id", description = "This endpoint is used to update cancellation request by id")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCustomer(@PathVariable Long id, @Valid @RequestBody CancellationRequestDto cancellationRequestDto) {
         log.info("Request to update cancellation request by id: {}", id);
@@ -62,6 +63,7 @@ public class CancellationRequestController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Delete cancellation request by id", description = "This endpoint is used to delete cancellation request by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCustomer(@PathVariable Long id) {
         log.info("Request to delete cancellation request by id: {}", id);
@@ -69,6 +71,7 @@ public class CancellationRequestController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Approve cancellation request by id (By Admin)", description = "This endpoint is used to approve cancellation request by id")
     @PostMapping("/{requestId}/approve")
     public ResponseEntity<Object> approveCancellationRequest(@PathVariable Long requestId) {
         log.info("Request to approve cancellation request by id: {}", requestId);
@@ -77,6 +80,7 @@ public class CancellationRequestController {
     }
 
 
+    @Operation(summary = "Reject cancellation request by id (By Admin)", description = "This endpoint is used to reject cancellation request by id")
     @PostMapping("/{requestId}/reject")
     public ResponseEntity<Object> rejectCancellationRequest(@PathVariable Long requestId) {
         log.info("Request to reject cancellation request by id: {}", requestId);
@@ -86,7 +90,7 @@ public class CancellationRequestController {
 
 
 
-    //searching by parameters
+    @Operation(summary = "Search cancellation request by parameters", description = "This endpoint is used to search cancellation request by parameters")
     @GetMapping("/search")
     public ResponseEntity<Object> searchCancellationRequest(@RequestParam(required = false) Long customerId,
                                                            @RequestParam(required = false) Long reservationId,
@@ -112,7 +116,4 @@ public class CancellationRequestController {
 
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
-
-
-
 }

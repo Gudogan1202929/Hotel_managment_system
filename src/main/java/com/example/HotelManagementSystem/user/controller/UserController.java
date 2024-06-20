@@ -8,6 +8,8 @@ import com.example.HotelManagementSystem.user.jwt.Create;
 import com.example.HotelManagementSystem.user.service.UserService;
 import com.example.HotelManagementSystem.utils.constant.SystemPaths;
 import com.example.HotelManagementSystem.utils.encryption.Encryption;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "User", description = "All user related endpoints")
 @RestController
 public class UserController {
 
@@ -30,6 +33,7 @@ public class UserController {
     @PostMapping(SystemPaths.LOGIN_PATH)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "User sign in", description = "This endpoint is used to sign in user")
     public ResponseEntity<?> UserSignIn(@RequestBody User user) {
         try {
             String text = userService.UserSignIn(user);
@@ -44,11 +48,11 @@ public class UserController {
 
     @PostMapping(SystemPaths.SIGNUP)
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "User sign up", description = "This endpoint is used to sign up user")
     @Consumes(MediaType.APPLICATION_JSON)
     public ResponseEntity<?> UserSignUp(@RequestBody User user) {
 
         try {
-            System.out.println("Hi");
             System.out.println(Encryption.Encrypt("12345678"));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -65,6 +69,7 @@ public class UserController {
 
     @PostMapping(SystemPaths.CHANGEPASSWORD)
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "User change password", description = "This endpoint is used to change password of user")
     @Consumes(MediaType.APPLICATION_JSON)
     public ResponseEntity<?> UserChangePassword(@RequestBody ChangeUserPassword changeUserPassword) {
         try {
@@ -82,6 +87,7 @@ public class UserController {
 
     @PostMapping(SystemPaths.CHANGEUSERNAME)
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "User change username", description = "This endpoint is used to change username of user")
     @Consumes(MediaType.APPLICATION_JSON)
     public ResponseEntity<?> UserChangeUserName(@RequestBody ChangeUserName changeUserName) {
         try {
@@ -98,6 +104,7 @@ public class UserController {
 
     @PostMapping(SystemPaths.CHANGEROLE)
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "User change role", description = "This endpoint is used to change role of user")
     @Consumes(MediaType.APPLICATION_JSON)
     public ResponseEntity<?> UserChangeRole(@RequestBody ChangeRole changeRole) {
         try {

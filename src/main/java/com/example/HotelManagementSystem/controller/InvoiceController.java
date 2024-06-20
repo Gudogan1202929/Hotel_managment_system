@@ -5,6 +5,8 @@ import com.example.HotelManagementSystem.dto.InvoiceDto;
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 import com.example.HotelManagementSystem.entity.Invoice;
 import com.example.HotelManagementSystem.service.InvoiceServiceInt;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@Tag(name = "Invoice", description = "All invoice related endpoints")
 @RequestMapping(value = "/api/v1/invoices")
 public class InvoiceController {
 
@@ -26,6 +29,7 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
+    @Operation(summary = "Retriving all invoices", description = "This endpoint is used to get all invoices")
     @GetMapping
     public ResponseEntity<Object> getAllInvoices() {
         log.info("Request to get all invoices");
@@ -33,6 +37,7 @@ public class InvoiceController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Create new invoice", description = "This endpoint used for adding new invoice")
     @PostMapping
     public ResponseEntity<Object> createInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
         log.info("Request to create a new invoice: {}", invoiceDto);
@@ -40,6 +45,7 @@ public class InvoiceController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Get invoice by id", description = "This endpoint is used to get invoice by id")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getInvoiceById(@PathVariable Long id) {
         log.info("Request to get invoice by id: {}", id);
@@ -47,6 +53,7 @@ public class InvoiceController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Update invoice by id", description = "This endpoint is used to update invoice by id")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateInvoice(@PathVariable Long id, @Valid @RequestBody InvoiceDto invoiceDto) {
         log.info("Request to update invoice by id: {}", id);
@@ -54,6 +61,7 @@ public class InvoiceController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @Operation(summary = "Delete invoice by id", description = "This endpoint is used to delete invoice by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteInvoice(@PathVariable Long id) {
         log.info("Request to delete invoice by id: {}", id);
@@ -61,9 +69,7 @@ public class InvoiceController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-
-
-
+    @Operation(summary = "Search invoice by parameters", description = "This endpoint is used to search invoice by parameters")
     public ResponseEntity<Object> searchInvoice(@RequestParam(required = false) Long reservationId,
                                                  @RequestParam(required = false) Double amount,
                                                  @RequestParam(required = false) String status) {
@@ -90,8 +96,4 @@ public class InvoiceController {
 
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
-
-
-
-
 }

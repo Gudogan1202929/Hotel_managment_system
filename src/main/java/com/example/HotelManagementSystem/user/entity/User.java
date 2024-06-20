@@ -28,9 +28,6 @@ public class User {
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
 
-    @Column(nullable = false, unique = true, length = 100)
-    private String email;
-
     @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
