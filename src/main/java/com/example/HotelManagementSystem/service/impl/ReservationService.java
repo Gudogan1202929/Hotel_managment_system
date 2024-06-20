@@ -46,7 +46,6 @@ public class ReservationService implements ReservationServiceInt {
                         .customerId(reservation.getCustomer().getId())
                         .checkInDate(reservation.getCheckInDate())
                         .checkOutDate(reservation.getCheckOutDate())
-                        .status(reservation.getStatus())
                         .build())
                 .toList();
 
@@ -68,7 +67,6 @@ public class ReservationService implements ReservationServiceInt {
                 .customerId(reservation.getCustomer().getId())
                 .checkInDate(reservation.getCheckInDate())
                 .checkOutDate(reservation.getCheckOutDate())
-                .status(reservation.getStatus())
                 .build();
 
         return APIResponse.ok(reservationDto, "Reservation fetched successfully");

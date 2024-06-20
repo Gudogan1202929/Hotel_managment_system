@@ -29,6 +29,4 @@ public class ReservationDto {
     @NotNull(message = "Check-out date is required")
     private Date checkOutDate;
 
-    @NotNull(message = "Status is required")
-    private Reservation.Status status;
 }

@@ -36,6 +36,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.22'
+
 
 
 }

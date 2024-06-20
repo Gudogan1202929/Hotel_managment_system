@@ -38,8 +38,5 @@ public class User {
     @Column(name = "role", nullable = false, columnDefinition = "TEXT")
     private Role role;
 
-    @OneToMany(mappedBy = "admin")
-    private List<CancellationRequest> cancellationRequests;
-
 
 }
