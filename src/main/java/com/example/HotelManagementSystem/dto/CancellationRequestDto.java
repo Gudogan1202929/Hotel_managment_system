@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -19,12 +20,9 @@ public class CancellationRequestDto {
     @NotNull(message = "Reservation ID is required")
     private Long reservationId;
 
-    @NotNull(message = "Admin ID is required")
-    private Long adminId;
-
     @NotNull(message = "Status is required")
     private CancellationRequest.Status status;
 
     @NotNull(message = "Requested at date is required")
-    private LocalDateTime requestedAt;
+    private Date requestedAt;
 }

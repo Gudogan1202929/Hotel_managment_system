@@ -20,6 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomerDto {
 
+    private Long id;
+
     private User user;
 
     private String firstName;

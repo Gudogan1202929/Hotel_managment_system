@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +24,7 @@ public class HousekeepingDto {
     private Long employeeId;
 
     @NotNull(message = "Task date is required")
-    private LocalDate taskDate;
+    private Date taskDate;
 
     @NotNull(message = "Status is required")
     private Housekeeping.Status status;

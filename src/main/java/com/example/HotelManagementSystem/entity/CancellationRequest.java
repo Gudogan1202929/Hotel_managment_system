@@ -26,10 +26,6 @@ public class CancellationRequest {
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
-    @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
-    private User admin;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status = Status.PENDING;

@@ -36,10 +36,6 @@ public class Reservation {
     @Column(name = "check_out_date", nullable = false)
     private Date checkOutDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status = Status.PENDING;
-
     @Column(name = "created_at", insertable = false, updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -53,10 +49,4 @@ public class Reservation {
         createdAt = new Date();
     }
 
-
-    public enum Status {
-        PENDING,
-        CONFIRMED,
-        CANCELLED
-    }
 }

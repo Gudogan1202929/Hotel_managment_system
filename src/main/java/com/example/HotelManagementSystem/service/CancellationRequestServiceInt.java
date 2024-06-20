@@ -8,5 +8,15 @@ import java.util.List;
 
 @Service
 public interface CancellationRequestServiceInt {
-    APIResponse<List<CancellationRequestDto>> getAllCancelation();
+
+    APIResponse<List<CancellationRequestDto>> getAllCancellations();
+
+    APIResponse<CancellationRequestDto> getCancellationById(Long id);
+
+    APIResponse<CancellationRequestDto> createCancellationRequest(CancellationRequestDto cancellationRequestDto);
+
+    APIResponse<CancellationRequestDto> updateCancellationRequest(Long id, CancellationRequestDto cancellationRequestDto);
+
+    APIResponse<CancellationRequestDto> deleteCancellationRequest(Long id);
+
 }
