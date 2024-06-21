@@ -13,7 +13,7 @@ services:
     networks:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5050/hmsdb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5050/hmsdb
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
