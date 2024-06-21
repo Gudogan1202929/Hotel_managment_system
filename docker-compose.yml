@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9096:9096"
+    depends_on:
+      - db
+    container_name: app
+
+
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: hmsdb
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    container_name: db
+
+volumes:
+  db-data:
