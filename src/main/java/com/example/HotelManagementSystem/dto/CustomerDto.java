@@ -2,6 +2,7 @@ package com.example.HotelManagementSystem.dto;
 
 import com.example.HotelManagementSystem.entity.Reservation;
 import com.example.HotelManagementSystem.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -22,6 +23,7 @@ public class CustomerDto {
 
     private Long id;
 
+    @JsonIgnore
     private User user;
 
     private String firstName;

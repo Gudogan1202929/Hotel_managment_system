@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -37,8 +38,8 @@ public class InvoiceService implements InvoiceServiceInt {
                         .id(invoice.getId())
                         .reservationId(invoice.getReservation().getId())
                         .amount(invoice.getAmount())
-                        .createdAt(invoice.getCreatedAt())
                         .status(invoice.getStatus())
+                        .createdAt(invoice.getCreatedAt())
                         .build())
                 .toList();
 
@@ -58,8 +59,8 @@ public class InvoiceService implements InvoiceServiceInt {
                 .id(invoice.getId())
                 .reservationId(invoice.getReservation().getId())
                 .amount(invoice.getAmount())
-                .createdAt(invoice.getCreatedAt())
                 .status(invoice.getStatus())
+                .createdAt(invoice.getCreatedAt())
                 .build();
 
         return APIResponse.ok(invoiceDto, "Invoice fetched successfully");
@@ -87,6 +88,7 @@ public class InvoiceService implements InvoiceServiceInt {
                 .reservation(reservationRepository.findById(invoiceDto.getReservationId()).get())
                 .amount(invoiceDto.getAmount())
                 .status(invoiceDto.getStatus())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
@@ -95,8 +97,8 @@ public class InvoiceService implements InvoiceServiceInt {
                 .id(savedInvoice.getId())
                 .reservationId(savedInvoice.getReservation().getId())
                 .amount(savedInvoice.getAmount())
-                .createdAt(savedInvoice.getCreatedAt())
                 .status(savedInvoice.getStatus())
+                .createdAt(savedInvoice.getCreatedAt())
                 .build();
 
         return APIResponse.created(savedInvoiceDto, "Invoice created successfully");
@@ -120,8 +122,8 @@ public class InvoiceService implements InvoiceServiceInt {
                 .id(updatedInvoice.getId())
                 .reservationId(updatedInvoice.getReservation().getId())
                 .amount(updatedInvoice.getAmount())
-                .createdAt(updatedInvoice.getCreatedAt())
                 .status(updatedInvoice.getStatus())
+                .createdAt(updatedInvoice.getCreatedAt())
                 .build();
 
         return APIResponse.ok(updatedInvoiceDto, "Invoice updated successfully");
@@ -141,7 +143,6 @@ public class InvoiceService implements InvoiceServiceInt {
                 .id(invoice.getId())
                 .reservationId(invoice.getReservation().getId())
                 .amount(invoice.getAmount())
-                .createdAt(invoice.getCreatedAt())
                 .status(invoice.getStatus())
                 .build();
 
@@ -159,15 +160,11 @@ public class InvoiceService implements InvoiceServiceInt {
                         .id(invoice.getId())
                         .reservationId(invoice.getReservation().getId())
                         .amount(invoice.getAmount())
-                        .createdAt(invoice.getCreatedAt())
                         .status(invoice.getStatus())
+                        .createdAt(invoice.getCreatedAt())
                         .build())
                 .toList();
 
         return APIResponse.ok(invoiceDtoList, "Invoices fetched successfully");
     }
-
-
-
-
 }

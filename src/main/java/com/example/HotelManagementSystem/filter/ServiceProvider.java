@@ -36,6 +36,7 @@ public class ServiceProvider {
     public void filter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        System.out.println("Request URL: " + request.getRequestURL());
 
 
         String ipAddress = request.getHeader(SystemConstants.IP_HEADER);
@@ -58,7 +59,7 @@ public class ServiceProvider {
                         //&& ipAddress != null)
                         || (requestUri.contains(SystemPaths.CHANGEROLE))
                         //&& ipAddress != null )
-                        || (requestUri.contains("/swagger-ui/index.html"))
+                        || (requestUri.contains("/swagger-ui"))
                         || (requestUri.contains("/swagger-ui/swagger-initializer.js")) ||
                         (requestUri.contains("/v3/api-docs/swagger-config"))||
                                 (requestUri.contains("/v3/api-docs"))){

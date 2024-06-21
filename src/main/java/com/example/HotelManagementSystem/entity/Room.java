@@ -36,8 +36,9 @@ public class Room {
     @Column(name = "room_number", nullable = false)
     private Integer roomNumber;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room" , cascade = CascadeType.ALL)
     private List<Reservation> reservations;
 
-
+    @OneToMany(mappedBy = "room" , cascade = CascadeType.ALL)
+    private List<Housekeeping> housekeepingTasks;
 }

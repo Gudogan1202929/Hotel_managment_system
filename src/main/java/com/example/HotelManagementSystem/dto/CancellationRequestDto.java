@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.dto;
 
 import com.example.HotelManagementSystem.entity.CancellationRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +21,5 @@ public class CancellationRequestDto {
     @NotNull(message = "Reservation ID is required")
     private Long reservationId;
 
-    @NotNull(message = "Status is required")
-    private CancellationRequest.Status status;
-
-    @NotNull(message = "Requested at date is required")
-    private Date requestedAt;
+    private LocalDateTime requestedAt = LocalDateTime.now();
 }

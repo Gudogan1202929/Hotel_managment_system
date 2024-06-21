@@ -1,6 +1,8 @@
 package com.example.HotelManagementSystem.dto;
 
 import com.example.HotelManagementSystem.entity.Reservation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,10 +25,8 @@ public class ReservationDto {
     @NotNull(message = "Room ID is required")
     private Long roomId;
 
-    @NotNull(message = "Check-in date is required")
     private Date checkInDate;
 
-    @NotNull(message = "Check-out date is required")
     private Date checkOutDate;
 
     //expected arrival time
@@ -37,4 +37,5 @@ public class ReservationDto {
     @NotNull(message = "Expected leaving time is required")
     private Date expectedLeavingTime;
 
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

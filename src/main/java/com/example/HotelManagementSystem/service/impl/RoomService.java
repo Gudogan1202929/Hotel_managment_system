@@ -18,8 +18,6 @@ public class RoomService implements RoomServiceInt {
 
     private final RoomRepo roomRepository;
 
-
-
     @Autowired
     public RoomService(RoomRepo roomRepository ) {
         this.roomRepository = roomRepository;

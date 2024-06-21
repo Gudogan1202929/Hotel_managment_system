@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -32,21 +34,12 @@ public class Invoice {
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
-    @Column(name = "created_at", insertable = false, updatable = false, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
+    @Column()
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public enum Status {
         PENDING,
         PAID,
         CANCELLED
     }
-
-
-    @PrePersist
-    public void prePersist() {
-        createdAt = new Date();
-    }
-
 }

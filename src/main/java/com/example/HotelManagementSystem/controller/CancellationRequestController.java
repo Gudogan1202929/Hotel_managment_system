@@ -63,13 +63,6 @@ public class CancellationRequestController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-    @Operation(summary = "Delete cancellation request by id", description = "This endpoint is used to delete cancellation request by id")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCustomer(@PathVariable Long id) {
-        log.info("Request to delete cancellation request by id: {}", id);
-        APIResponse<CancellationRequestDto> response = cancellationRequestServiceInt.deleteCancellationRequest(id);
-        return ResponseEntity.status(response.getHttpStatus()).body(response);
-    }
 
     @Operation(summary = "Approve cancellation request by id (By Admin)", description = "This endpoint is used to approve cancellation request by id")
     @PostMapping("/{requestId}/approve")

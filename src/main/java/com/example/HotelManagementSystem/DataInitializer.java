@@ -7,11 +7,13 @@ import com.example.HotelManagementSystem.user.entity.User;
 import com.example.HotelManagementSystem.user.repositorie.UserRepo;
 import com.example.HotelManagementSystem.utils.constant.SystemConstants;
 import com.example.HotelManagementSystem.utils.encryption.Encryption;
+import com.example.HotelManagementSystem.utils.encryption.Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -51,9 +53,10 @@ public class DataInitializer implements CommandLineRunner {
 
         //add an admin and employee
         //for admin
-        String password = "admin@123";
+        String password = "12345678";
+        System.out.println("Encrypted password: " + Encryption.Encrypt(password) + "the password is: " + password);
         //encrypt password
-        String encryptedPassword = Encryption.Encrypt(password);
+        String encryptedPassword = Hash.hashing(password);
         User admin = User.builder()
                 .username("admin")
                 .password(encryptedPassword)
@@ -62,9 +65,10 @@ public class DataInitializer implements CommandLineRunner {
         userRepository.save(admin);
 
         //for ordinary customer
-        password = "customer@123";
+        password = "123123123";
+        System.out.println("Encrypted password: " + Encryption.Encrypt(password) + "the password is: " + password);
         //encrypt password
-        encryptedPassword = Encryption.Encrypt(password);
+        encryptedPassword = Hash.hashing(password);
         User customer = User.builder()
                 .username("customer")
                 .password(encryptedPassword)
@@ -72,7 +76,6 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
 
         userRepository.save(customer);
-
 
         //add rooms
         Room room1 = Room.builder()
@@ -145,7 +148,7 @@ public class DataInitializer implements CommandLineRunner {
         Reservation reservation = Reservation.builder()
                 .room(room)
                 .customer(customer_to_reserve)
-                .createdAt(new Date())
+                .createdAt(LocalDateTime.now())
                 .checkInDate(null)
                 .checkOutDate(null)
                 .expectedArrivalTime(new Date(2021, Calendar.NOVEMBER, 10, 12, 0))
@@ -157,13 +160,11 @@ public class DataInitializer implements CommandLineRunner {
         //add invoice
         Invoice invoice = Invoice.builder()
                 .reservation(reservation)
-                .createdAt(new Date())
+                .createdAt(LocalDateTime.now())
                 .status(Invoice.Status.PENDING)
                 .amount(500.50)
                 .build();
 
         invoiceRepository.save(invoice);
-
-
     }
 }
