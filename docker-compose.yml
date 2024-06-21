@@ -10,8 +10,16 @@ services:
     depends_on:
       - db
     container_name: app
-
-
+    networks:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5050/hmsdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
 
   db:
     image: postgres
@@ -20,10 +28,16 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     ports:
-      - "5432:5432"
+      - "5050:5050"
     volumes:
       - db-data:/var/lib/postgresql/data
     container_name: db
+    networks:
+      - postgres
 
 volumes:
   db-data:
+
+networks:
+  postgres:
+    driver: bridge
