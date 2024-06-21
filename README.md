@@ -154,6 +154,12 @@ The Database ERD is as follows:
         - `customerId`: Customer ID of the cancellation request.
 
 ## OpenAPI Documentation
+
+<p align="center">
+    <img src="./images/openapi-logo.png" alt="OpenAPI v3.1.0"  width="150" >
+</p>
+
+
 The OpenAPI documentation can be accessed at `/swagger-ui.html` endpoint.
 
 ## 📦 Running the project
