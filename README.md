@@ -29,6 +29,8 @@ control.
 - [📦 Running the project](#-running-the-project)
   - [🔧 Command Line ](#-command-line)
   - [🔧 Docker](#-docker)
+- [Docker Hub Image](#docker-hub-image)
+
 
 ## 🧰 Resources
 The project have the following resources:
@@ -178,5 +180,10 @@ cd hotel-management-system
 docker-compose up
 ```
 
-
+## Docker Hub Image
+the link to the docker image is [here](https://hub.docker.com/r/omarxq/hotel-managment-system)
+The Docker image is available on Docker Hub, you can pull the image using the following command:
+```bash
+docker pull omarxq/hotel-management-system
+```
 

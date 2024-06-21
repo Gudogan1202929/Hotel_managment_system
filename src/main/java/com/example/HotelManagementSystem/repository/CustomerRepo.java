@@ -12,4 +12,6 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> , JpaSpecifi
     Customer findByPhone(String phone);
     List<Customer> findByFirstNameContaining(String Firstname);
     List<Customer> findByLastNameContaining(String Lastname);
+
+    Customer findByFirstName(String john);
 }

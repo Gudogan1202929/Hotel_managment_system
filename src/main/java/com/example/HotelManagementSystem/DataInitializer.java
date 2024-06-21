@@ -6,11 +6,13 @@ import com.example.HotelManagementSystem.user.dto.Role;
 import com.example.HotelManagementSystem.user.entity.User;
 import com.example.HotelManagementSystem.user.repositorie.UserRepo;
 import com.example.HotelManagementSystem.utils.constant.SystemConstants;
+import com.example.HotelManagementSystem.utils.encryption.Encryption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 @Component
@@ -46,104 +48,122 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        // Initialize Users
-//        User admin = User.builder()
-//                .username("admin")
-//                .password("password")
-//                .email("admin@example.com")
-//                .role(Role.ADMIN)
-//                .build();
-//        userRepository.save(admin);
-//
-//        User user = User.builder()
-//                .username("user")
-//                .password("password")
-//                .email("user@example.com")
-//                .role(Role.USER)
-//                .build();
-//        userRepository.save(user);
-//
-//        // Initialize Customers
-//        Customer customer1 = Customer.builder()
-//                .firstName("John")
-//                .lastName("Doe")
-//                .phone("1234567890")
-//                .address("123 Main St")
-//                .build();
-//        customerRepository.save(customer1);
-//
-//        Customer customer2 = Customer.builder()
-//                .firstName("Jane")
-//                .lastName("Smith")
-//                .phone("0987654321")
-//                .address("456 Elm St")
-//                .build();
-//        customerRepository.save(customer2);
-//
-//        // Initialize Rooms
-//        Room room1 = Room.builder()
-//                .floorNumber(1)
-//                .roomClass(standardClass)
-//                .status(availableStatus)
-//                .roomNumber(101)
-//                .build();
-//        roomRepository.save(room1);
-//
-//        Room room2 = Room.builder()
-//                .floorNumber(1)
-//                .roomClass(deluxeClass)
-//                .status(occupiedStatus)
-//                .roomNumber(102)
-//                .build();
-//        roomRepository.save(room2);
-//
-//        // Initialize Reservations
-//        Reservation reservation1 = Reservation.builder()
-//                .customer(customer1)
-//                .room(room1)
-//                .checkInDate(new Date())
-//                .checkOutDate(new Date())
-//                .status(ReservationStatus.CONFIRMED)
-//                .createdAt(new Date())
-//                .build();
-//        reservationRepository.save(reservation1);
-//
-//        // Initialize Invoices
-//        Invoice invoice1 = Invoice.builder()
-//                .user(admin)
-//                .reservation(reservation1)
-//                .amount(new BigDecimal("100.00"))
-//                .status(InvoiceStatus.PAID)
-//                .createdAt(new Date())
-//                .build();
-//        invoiceRepository.save(invoice1);
-//
-//        // Initialize Employees
-//        Employee employee1 = Employee.builder()
-//                .firstName("Alice")
-//                .lastName("Johnson")
-//                .position("Housekeeper")
-//                .phone("1122334455")
-//                .address("789 Oak St")
-//                .build();
-//        employeeRepository.save(employee1);
-//
-//        // Initialize Housekeeping
-//        Housekeeping housekeeping1 = Housekeeping.builder()
-//                .room(room1)
-//                .employee(employee1)
-//                .taskDate(new Date())
-//                .status(HousekeepingStatus.COMPLETED)
-//                .build();
-//        housekeepingRepository.save(housekeeping1);
-//
-//        // Initialize CancellationRequests
-//        CancellationRequest cancellationRequest1 = CancellationRequest.builder()
-//                .reservation(reservation1)
-//                .admin(admin)
-//                .status(CancellationStatus.PENDING)
-//                .requestedAt(new Date())
-//                .build();
-//        cancellationRequestRepository.save(cancellationRequest1);
+
+        //add an admin and employee
+        //for admin
+        String password = "admin@123";
+        //encrypt password
+        String encryptedPassword = Encryption.Encrypt(password);
+        User admin = User.builder()
+                .username("admin")
+                .password(encryptedPassword)
+                .role(Role.ADMIN)
+                .build();
+        userRepository.save(admin);
+
+        //for ordinary customer
+        password = "customer@123";
+        //encrypt password
+        encryptedPassword = Encryption.Encrypt(password);
+        User customer = User.builder()
+                .username("customer")
+                .password(encryptedPassword)
+                .role(Role.USER)
+                .build();
+
+        userRepository.save(customer);
+
+
+        //add rooms
+        Room room1 = Room.builder()
+                .roomNumber(101)
+                .roomInfo("Single Room")
+                .roomStatus("AVAILABLE")
+                .bedNumber(1)
+                .floorNumber(1)
+                .build();
+
+        Room room2 = Room.builder()
+                .roomNumber(102)
+                .roomInfo("Double Room")
+                .roomStatus("AVAILABLE")
+                .bedNumber(2)
+                .floorNumber(1)
+                .build();
+
+        Room room3 = Room.builder()
+                .roomNumber(201)
+                .roomInfo("Single Room")
+                .roomStatus("AVAILABLE")
+                .bedNumber(1)
+                .floorNumber(2)
+                .build();
+
+        roomRepository.save(room1);
+        roomRepository.save(room2);
+        roomRepository.save(room3);
+
+
+        //add customers
+
+        User user = userRepository.findByUsername("customer");
+
+        Customer customer1 = Customer.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .phone("1234567890")
+                .address("123, Main Street, New York")
+                .user(user)
+                .build();
+
+        customerRepository.save(customer1);
+
+        //add employee
+        Employee employee = Employee.builder()
+                .firstName("Jane")
+                .lastName("Doe")
+                .position("Housekeeper")
+                .phone("0987654321")
+                .address("456, Main Street, New York")
+                .build();
+
+        employeeRepository.save(employee);
+
+        //add housekeeping tasks
+        Housekeeping housekeeping = Housekeeping.builder()
+                .room(room1)
+                .status(Housekeeping.Status.PENDING)
+                .employee(employee)
+                .taskDate(new Date())
+                .build();
+
+        housekeepingRepository.save(housekeeping);
+
+        //add reservation
+        Room room = roomRepository.findByRoomNumber(101);
+        Customer customer_to_reserve = customerRepository.findByFirstName("John");
+        Reservation reservation = Reservation.builder()
+                .room(room)
+                .customer(customer_to_reserve)
+                .createdAt(new Date())
+                .checkInDate(null)
+                .checkOutDate(null)
+                .expectedArrivalTime(new Date(2021, Calendar.NOVEMBER, 10, 12, 0))
+                .expectedLeavingTime(new Date(2021, Calendar.NOVEMBER, 15, 12, 0))
+                .build();
+
+        reservationRepository.save(reservation);
+
+        //add invoice
+        Invoice invoice = Invoice.builder()
+                .reservation(reservation)
+                .createdAt(new Date())
+                .status(Invoice.Status.PENDING)
+                .amount(500.50)
+                .build();
+
+        invoiceRepository.save(invoice);
+
+
     }
 }
