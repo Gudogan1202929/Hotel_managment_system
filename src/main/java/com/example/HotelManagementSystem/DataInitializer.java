@@ -109,7 +109,7 @@ public class DataInitializer implements CommandLineRunner {
 
         //add customers
 
-        User user = userRepository.findByUsername("customer");
+        User user = userRepository.findByUsername("omarqalaweh@gmail.com");
 
         Customer customer1 = Customer.builder()
                 .firstName("John")
