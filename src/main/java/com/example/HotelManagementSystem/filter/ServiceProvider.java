@@ -59,6 +59,7 @@ public class ServiceProvider {
                         //&& ipAddress != null)
                         || (requestUri.contains(SystemPaths.CHANGEROLE))
                         //&& ipAddress != null )
+                        || (requestUri.contains("user"))
                         || (requestUri.contains("/swagger-ui"))
                         || (requestUri.contains("/swagger-ui/swagger-initializer.js")) ||
                         (requestUri.contains("/v3/api-docs/swagger-config"))||

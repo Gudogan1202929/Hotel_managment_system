@@ -1,7 +1,9 @@
 package com.example.HotelManagementSystem.user.entity;
 
 import com.example.HotelManagementSystem.entity.CancellationRequest;
+import com.example.HotelManagementSystem.entity.Customer;
 import com.example.HotelManagementSystem.user.dto.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +36,4 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, columnDefinition = "TEXT")
     private Role role;
-
-
 }

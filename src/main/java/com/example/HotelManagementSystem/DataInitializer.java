@@ -58,7 +58,7 @@ public class DataInitializer implements CommandLineRunner {
         //encrypt password
         String encryptedPassword = Hash.hashing(password);
         User admin = User.builder()
-                .username("admin")
+                .username("mohammadnmosleh123@gmail.com")
                 .password(encryptedPassword)
                 .role(Role.ADMIN)
                 .build();
@@ -70,7 +70,7 @@ public class DataInitializer implements CommandLineRunner {
         //encrypt password
         encryptedPassword = Hash.hashing(password);
         User customer = User.builder()
-                .username("customer")
+                .username("omarqalaweh@gmail.com")
                 .password(encryptedPassword)
                 .role(Role.USER)
                 .build();

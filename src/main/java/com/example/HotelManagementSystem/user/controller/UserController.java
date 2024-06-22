@@ -3,6 +3,7 @@ package com.example.HotelManagementSystem.user.controller;
 import com.example.HotelManagementSystem.user.dto.ChangeRole;
 import com.example.HotelManagementSystem.user.dto.ChangeUserName;
 import com.example.HotelManagementSystem.user.dto.ChangeUserPassword;
+import com.example.HotelManagementSystem.user.dto.PasswordDto;
 import com.example.HotelManagementSystem.user.entity.User;
 import com.example.HotelManagementSystem.user.jwt.Create;
 import com.example.HotelManagementSystem.user.service.UserService;
@@ -14,10 +15,9 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User", description = "All user related endpoints")
 @RestController
@@ -116,6 +116,53 @@ public class UserController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/user")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Get user by ID", description = "This endpoint is used to retrieve a user by ID and verify their password")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ResponseEntity<?> getUserById(@RequestParam("id") Long id, @RequestBody PasswordDto requestBody) {
+        try {
+            String password = requestBody.getPassword();
+            if (password == null) {
+                return ResponseEntity.badRequest().body("Password is required");
+            }
+
+            User user = userService.getUserById(id, password);
+            if (user != null) {
+                return ResponseEntity.ok().body(user + " retrieved successfully");
+            } else {
+                return ResponseEntity.badRequest().body(user);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/user")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Delete user by ID", description = "This endpoint is used to delete a user by ID and verify their password")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ResponseEntity<?> deleteUserById(@RequestParam("id") Long id, @RequestBody PasswordDto requestBody) {
+        try {
+            String password = requestBody.getPassword();
+            if (password == null) {
+                return ResponseEntity.badRequest().body("Password is required");
+            }
+
+            String result = userService.deleteUserById(id, password);
+            if (result.contains("deleted successfully")) {
+                return ResponseEntity.ok().body(result);
+            } else if (result.contains("does not exist") || result.contains("incorrect") || result.contains("Cannot delete")) {
+                return ResponseEntity.badRequest().body(result);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
 }
