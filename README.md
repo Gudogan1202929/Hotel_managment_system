@@ -26,6 +26,7 @@ control.
 - [✏ ERD's and Diagrams](#-erds-and-diagrams)
 - [📋 API Endpoints](#-api-endpoints)
 - [OpenAPI Documentation](#openapi-documentation)
+- [Postman Collection](#postman-collection)
 - [📦 Running the project](#-running-the-project)
   - [🔧 Command Line ](#-command-line)
   - [🔧 Docker](#-docker)
@@ -161,6 +162,16 @@ The Database ERD is as follows:
 
 
 The OpenAPI documentation can be accessed at `/swagger-ui.html` endpoint.
+
+
+## Postman Collection
+
+<p align="center">
+    <img src="./images/postman-icon.svg" alt="Postman"  width="130" >
+</p>
+
+- The Postman collection is in the following file [Postman Collection](./hms.json)
+
 
 ## 📦 Running the project
 
