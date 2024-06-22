@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -44,17 +46,12 @@ public class Reservation {
     @Column(name = "expected_leaving_time")
     private Date expectedLeavingTime;
 
+    @Column()
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "created_at", insertable = false, updatable = false, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CancellationRequest> cancellationRequests;
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = new Date();
-    }
-
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice> invoices;
 }

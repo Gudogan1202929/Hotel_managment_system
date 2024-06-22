@@ -1,6 +1,5 @@
 package com.example.HotelManagementSystem.service.impl;
 
-import com.example.HotelManagementSystem.dto.InvoiceDto;
 import com.example.HotelManagementSystem.dto.ReservationDto;
 import com.example.HotelManagementSystem.entity.*;
 import com.example.HotelManagementSystem.exception.BadRequestException;
@@ -10,12 +9,14 @@ import com.example.HotelManagementSystem.repository.CustomerRepo;
 import com.example.HotelManagementSystem.repository.RoomRepo;
 import com.example.HotelManagementSystem.repository.RoomReservationRepo;
 import com.example.HotelManagementSystem.service.ReservationServiceInt;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.HotelManagementSystem.dto.response.APIResponse;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class ReservationService implements ReservationServiceInt {
                         .checkOutDate(reservation.getCheckOutDate())
                         .expectedArrivalTime(reservation.getExpectedArrivalTime())
                         .expectedLeavingTime(reservation.getExpectedLeavingTime())
+                        .createdAt(reservation.getCreatedAt())
                         .build())
                 .toList();
 
@@ -71,48 +73,41 @@ public class ReservationService implements ReservationServiceInt {
                 .checkOutDate(reservation.getCheckOutDate())
                 .expectedArrivalTime(reservation.getExpectedArrivalTime())
                 .expectedLeavingTime(reservation.getExpectedLeavingTime())
+                .createdAt(reservation.getCreatedAt())
                 .build();
 
         return APIResponse.ok(reservationDto, "Reservation fetched successfully");
     }
 
+    @Transactional
     @Override
     public APIResponse<ReservationDto> createReservation(ReservationDto reservationDto) {
 
-        //id should be null when creating a new reservation
+        // Id should be null when creating a new reservation
         if (reservationDto.getId() != null) {
             throw new IllegalArgumentException("Id should be null when creating a new reservation");
         }
 
-        //check if the customer exists
-        if (customerRepo.findById(reservationDto.getCustomerId()).isEmpty()) {
-            throw new ResourceNotFoundException(Reservation.class, "customerId", reservationDto.getCustomerId().toString());
-        }
+        // Check if the customer exists
+        Customer customer = customerRepo.findById(reservationDto.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException(Reservation.class, "customerId", reservationDto.getCustomerId().toString()));
 
-        //check if the room exists
-        Room room = roomRepo.findById(reservationDto.getRoomId()).orElseThrow(() ->
-                new ResourceNotFoundException(Reservation.class, "roomId", reservationDto.getRoomId().toString())
-        );
+        // Check if the room exists
+        Room room = roomRepo.findById(reservationDto.getRoomId())
+                .orElseThrow(() -> new ResourceNotFoundException(Reservation.class, "roomId", reservationDto.getRoomId().toString()));
 
-        //check if the room is already reserved
-        if ("RESERVED".equals(room.getRoomStatus())) {
-            throw new BadRequestException("Room is already reserved");
-        }
-
-        //check if the room is already reserved in the given date range according to the expected arrival and leaving time
-        if (reservationRepo.existsByRoomIdAndExpectedArrivalTimeLessThanEqualAndExpectedLeavingTimeGreaterThanEqual(reservationDto.getRoomId(), reservationDto.getExpectedLeavingTime(), reservationDto.getExpectedArrivalTime())) {
+        // Check if the room is already reserved in the given date range according to the expected arrival and leaving time
+        if (reservationRepo.existsByRoomIdAndDateRangeOverlap(reservationDto.getRoomId(), reservationDto.getExpectedArrivalTime(), reservationDto.getExpectedLeavingTime())) {
             throw new BadRequestException("Room is already reserved in the given date range");
         }
 
-        Customer customer = customerRepo.findById(reservationDto.getCustomerId()).get();
-
+        // Create and save the new reservation
         Reservation reservation = Reservation.builder()
                 .customer(customer)
                 .room(room)
-                .checkInDate(reservationDto.getCheckInDate())
-                .checkOutDate(reservationDto.getCheckOutDate())
                 .expectedArrivalTime(reservationDto.getExpectedArrivalTime())
                 .expectedLeavingTime(reservationDto.getExpectedLeavingTime())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         reservation = reservationRepo.save(reservation);
@@ -121,15 +116,14 @@ public class ReservationService implements ReservationServiceInt {
         room.setRoomStatus("RESERVED");
         roomRepo.save(room);
 
-
+        // Create and return the response DTO
         ReservationDto savedReservationDto = ReservationDto.builder()
                 .id(reservation.getId())
                 .roomId(reservation.getRoom().getId())
                 .customerId(reservation.getCustomer().getId())
-                .checkInDate(reservation.getCheckInDate())
-                .checkOutDate(reservation.getCheckOutDate())
                 .expectedArrivalTime(reservation.getExpectedArrivalTime())
                 .expectedLeavingTime(reservation.getExpectedLeavingTime())
+                .createdAt(reservation.getCreatedAt())
                 .build();
 
         return APIResponse.created(savedReservationDto, "Reservation created successfully");
@@ -172,6 +166,7 @@ public class ReservationService implements ReservationServiceInt {
         reservation.setCheckOutDate(reservationDto.getCheckOutDate());
         reservation.setExpectedArrivalTime(reservationDto.getExpectedArrivalTime());
         reservation.setExpectedLeavingTime(reservationDto.getExpectedLeavingTime());
+        reservation.setCreatedAt(reservationDto.getCreatedAt());
 
         reservation = reservationRepo.save(reservation);
 
@@ -187,6 +182,7 @@ public class ReservationService implements ReservationServiceInt {
                 .checkOutDate(reservation.getCheckOutDate())
                 .expectedArrivalTime(reservation.getExpectedArrivalTime())
                 .expectedLeavingTime(reservation.getExpectedLeavingTime())
+                .createdAt(reservation.getCreatedAt())
                 .build();
 
         return APIResponse.ok(updatedReservationDto, "Reservation updated successfully");
@@ -269,6 +265,7 @@ public class ReservationService implements ReservationServiceInt {
                         .checkOutDate(reservation.getCheckOutDate())
                         .expectedArrivalTime(reservation.getExpectedArrivalTime())
                         .expectedLeavingTime(reservation.getExpectedLeavingTime())
+                        .createdAt(reservation.getCreatedAt())
                         .build())
                 .toList();
 

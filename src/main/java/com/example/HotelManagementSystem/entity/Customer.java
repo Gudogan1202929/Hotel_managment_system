@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.entity;
 
 import com.example.HotelManagementSystem.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

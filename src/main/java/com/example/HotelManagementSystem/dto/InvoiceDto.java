@@ -1,12 +1,14 @@
 package com.example.HotelManagementSystem.dto;
 
 import com.example.HotelManagementSystem.entity.Invoice;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -25,5 +27,5 @@ public class InvoiceDto {
         @NotNull(message = "Status is required")
         private Invoice.Status status;
 
-        private Date createdAt;
+        private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,7 +42,7 @@ public class CancellationRequestService implements CancellationRequestServiceInt
                 .map(cancellationRequest -> CancellationRequestDto.builder()
                         .id(cancellationRequest.getId())
                         .reservationId(cancellationRequest.getReservation().getId())
-                        .status(cancellationRequest.getStatus())
+                        .requestedAt(cancellationRequest.getRequestedAt())
                         .requestedAt(cancellationRequest.getRequestedAt())
                         .build())
                 .toList();
@@ -61,7 +62,6 @@ public class CancellationRequestService implements CancellationRequestServiceInt
         CancellationRequestDto cancellationRequestDto = CancellationRequestDto.builder()
                 .id(cancellationRequest.getId())
                 .reservationId(cancellationRequest.getReservation().getId())
-                .status(cancellationRequest.getStatus())
                 .requestedAt(cancellationRequest.getRequestedAt())
                 .build();
 
@@ -81,18 +81,16 @@ public class CancellationRequestService implements CancellationRequestServiceInt
             throw new ResourceNotFoundException(CancellationRequest.class, "reservationId", "null");
         }
 
-
         //find the reservation by id
         if (!roomReservationRepo.existsById(cancellationRequestDto.getReservationId())) {
             throw new ResourceNotFoundException(CancellationRequest.class, "reservationId", cancellationRequestDto.getReservationId().toString());
         }
 
-
         //create a new cancellation request
         CancellationRequest cancellationRequest = CancellationRequest.builder()
                 .reservation(roomReservationRepo.findById(cancellationRequestDto.getReservationId()).get())
-                .status(CancellationRequest.Status.PENDING)
                 .requestedAt(cancellationRequestDto.getRequestedAt())
+                .requestedAt(LocalDateTime.now())
                 .build();
 
         cancellationRequest = cancellationRequestRepo.save(cancellationRequest);
@@ -100,8 +98,8 @@ public class CancellationRequestService implements CancellationRequestServiceInt
         CancellationRequestDto newCancellationRequestDto = CancellationRequestDto.builder()
                 .id(cancellationRequest.getId())
                 .reservationId(cancellationRequest.getReservation().getId())
-                .status(cancellationRequest.getStatus())
                 .requestedAt(cancellationRequest.getRequestedAt())
+                .requestedAt(LocalDateTime.now())
                 .build();
 
         return APIResponse.created(newCancellationRequestDto, "Cancellation request created successfully");
@@ -127,14 +125,12 @@ public class CancellationRequestService implements CancellationRequestServiceInt
 
         //update the cancellation request
         cancellationRequest.setReservation(roomReservationRepo.findById(cancellationRequestDto.getReservationId()).get());
-        cancellationRequest.setStatus(cancellationRequestDto.getStatus());
 
         cancellationRequest = cancellationRequestRepo.save(cancellationRequest);
 
         CancellationRequestDto updatedCancellationRequestDto = CancellationRequestDto.builder()
                 .id(cancellationRequest.getId())
                 .reservationId(cancellationRequest.getReservation().getId())
-                .status(cancellationRequest.getStatus())
                 .requestedAt(cancellationRequest.getRequestedAt())
                 .build();
 
@@ -155,7 +151,6 @@ public class CancellationRequestService implements CancellationRequestServiceInt
         CancellationRequestDto cancellationRequestDto = CancellationRequestDto.builder()
                 .id(cancellationRequest.getId())
                 .reservationId(cancellationRequest.getReservation().getId())
-                .status(cancellationRequest.getStatus())
                 .requestedAt(cancellationRequest.getRequestedAt())
                 .build();
 
@@ -170,10 +165,6 @@ public class CancellationRequestService implements CancellationRequestServiceInt
 
         if (cancellationRequest == null) {
             throw new ResourceNotFoundException(CancellationRequest.class, "id", requestId.toString());
-        }
-
-        if (cancellationRequest.getStatus() != CancellationRequest.Status.PENDING) {
-            throw new BadRequestException("Cancellation request is not pending");
         }
 
         // Retrieve the reservation to be cancelled
@@ -192,13 +183,11 @@ public class CancellationRequestService implements CancellationRequestServiceInt
         roomReservationRepo.delete(reservation);
 
         // Update the cancellation request status to APPROVED
-        cancellationRequest.setStatus(CancellationRequest.Status.APPROVED);
-        cancellationRequest = cancellationRequestRepo.save(cancellationRequest);
+        cancellationRequestRepo.delete(cancellationRequest);
 
         CancellationRequestDto cancellationRequestDto = CancellationRequestDto.builder()
                 .id(cancellationRequest.getId())
                 .reservationId(cancellationRequest.getReservation().getId())
-                .status(cancellationRequest.getStatus())
                 .requestedAt(cancellationRequest.getRequestedAt())
                 .build();
 
@@ -215,17 +204,11 @@ public class CancellationRequestService implements CancellationRequestServiceInt
             throw new ResourceNotFoundException(CancellationRequest.class, "id", requestId.toString());
         }
 
-        if (cancellationRequest.getStatus() != CancellationRequest.Status.PENDING) {
-            throw new BadRequestException("Cancellation request is not pending");
-        }
-
-        cancellationRequest.setStatus(CancellationRequest.Status.REJECTED);
-        cancellationRequest = cancellationRequestRepo.save(cancellationRequest);
+        cancellationRequestRepo.delete(cancellationRequest);
 
         CancellationRequestDto cancellationRequestDto = CancellationRequestDto.builder()
                 .id(cancellationRequest.getId())
                 .reservationId(cancellationRequest.getReservation().getId())
-                .status(cancellationRequest.getStatus())
                 .requestedAt(cancellationRequest.getRequestedAt())
                 .build();
 
@@ -246,7 +229,6 @@ public class CancellationRequestService implements CancellationRequestServiceInt
                 .map(cancellationRequest -> CancellationRequestDto.builder()
                         .id(cancellationRequest.getId())
                         .reservationId(cancellationRequest.getReservation().getId())
-                        .status(cancellationRequest.getStatus())
                         .requestedAt(cancellationRequest.getRequestedAt())
                         .build())
                 .toList();

@@ -1,5 +1,7 @@
 package com.example.HotelManagementSystem.user.service;
 
+import com.example.HotelManagementSystem.entity.Customer;
+import com.example.HotelManagementSystem.repository.CustomerRepo;
 import com.example.HotelManagementSystem.user.dto.ChangeRole;
 import com.example.HotelManagementSystem.user.dto.ChangeUserName;
 import com.example.HotelManagementSystem.user.dto.ChangeUserPassword;
@@ -14,18 +16,22 @@ import org.apache.tomcat.util.buf.UDecoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
     private final Create create;
     private final Check check;
     private final UserRepo userRepo;
+    private final CustomerRepo customerRepo;
 
     @Autowired
-    public UserService(UserRepo userRepo, Create create , Check check) {
+    public UserService(UserRepo userRepo, Create create , Check check, CustomerRepo customerRepo) {
         this.create = create;
         this.check = check;
         this.userRepo = userRepo;
+        this.customerRepo = customerRepo;
     }
 
     public String UserSignIn(User user) {
@@ -123,4 +129,51 @@ public class UserService {
             return e.getMessage();
         }
     }
+
+    public User getUserById(Long id, String password) {
+        try {
+            User user = userRepo.findById(id).orElse(null);
+            if (user == null) {
+                return null;
+            }
+            String decryptedPassword = Encryption.Decrypt(password);
+            String hashedPassword = Hash.hashing(decryptedPassword);
+            if (hashedPassword.equals(user.getPassword())) {
+                return user;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String deleteUserById(Long id, String password) {
+        try {
+            User user = userRepo.findById(id).orElse(null);
+            if (user == null) {
+                return "User with id " + id + " does not exist";
+            }
+            String decryptedPassword = Encryption.Decrypt(password);
+            String hashedPassword = Hash.hashing(decryptedPassword);
+            if (hashedPassword.equals(user.getPassword())) {
+                // Check for existing reservations
+                Optional<Customer> customerOptional = customerRepo.findByUserId(id);
+                if (customerOptional.isPresent()) {
+                    Customer customer = customerOptional.get();
+                    if (!customer.getReservations().isEmpty()) {
+                        return "Cannot delete user because they have existing reservations";
+                    }
+                    customerRepo.delete(customer);
+                }
+                userRepo.delete(user);
+                return "User with id " + id + " deleted successfully";
+            } else {
+                return "The password is incorrect";
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
 }

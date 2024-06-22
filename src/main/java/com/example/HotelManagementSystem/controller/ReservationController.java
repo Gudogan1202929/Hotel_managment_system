@@ -85,13 +85,6 @@ public class ReservationController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-    @Operation(summary = "Request cancellation of reservation by id", description = "This endpoint is used to request cancellation of reservation by id")
-    @PostMapping("{reservationId}/request-cancellation")
-    public ResponseEntity<Object> requestCancellation(@PathVariable Long reservationId) {
-        log.info("Request to cancel reservation by id: {}", reservationId);
-        APIResponse<ReservationDto> response = reservationService.requestCancellation(reservationId);
-        return ResponseEntity.status(response.getHttpStatus()).body(response);
-    }
 
     @Operation(summary = "Approve cancellation of reservation by id", description = "This endpoint is used to approve cancellation of reservation by id")
     @GetMapping("/search")
